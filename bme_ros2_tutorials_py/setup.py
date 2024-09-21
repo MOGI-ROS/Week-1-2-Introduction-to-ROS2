@@ -23,7 +23,9 @@ setup(
         'console_scripts': [
             'py_hello_world = scripts.hello_world:main',
             'py_publisher = scripts.publisher:main',
-            'py_publisher_oop = scripts.publisher_oop:main'
+            'py_publisher_oop = scripts.publisher_oop:main',
+            'py_subscriber = scripts.subscriber:main',
+            'py_subscriber_oop = scripts.subscriber_oop:main'
         ],
     },
 )
