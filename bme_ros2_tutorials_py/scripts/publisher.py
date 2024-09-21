@@ -13,9 +13,9 @@ def main(args=None):
     msg = String()                     # Initialize msg as a 'String' instance
     i = 0
     while rclpy.ok():                  # Breaks the loop on ctrl+c
-        msg.data = f'Hello World: {i}' # Write the actual string into msg's data field
+        msg.data = f'Hello, world: {i}' # Write the actual string into msg's data field
         i += 1
-        node.get_logger().info('Publishing: "%s"' % msg.data)
+        node.get_logger().info(f'Publishing: "{msg.data}"')
         publisher.publish(msg)         # Let the node publish the msg according to the publisher setup
         time.sleep(0.5)                # Python wait function in seconds
 
