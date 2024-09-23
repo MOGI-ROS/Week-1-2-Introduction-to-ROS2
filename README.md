@@ -1,14 +1,14 @@
 [//]: # (Image References)
 
-[image1]: ./assets/markdown.svg "Markdwonn"
+[image1]: ./assets/robots.png "Robots"
 [image2]: ./assets/terminator.png "Terminator"
-[image3]: ./assets/vcxsrv_1.png "VcXsrv"
+[image3]: ./assets/windows-terminal.png "Terminal"
 [image4]: ./assets/vcxsrv_2.png "VcXsrv"
 [image5]: ./assets/vcxsrv_3.png "VcXsrv"
 
-# Week 1-2: Introduction to ROS(2)
+# Week 1-2: Introduction to ROS2
 
-## This is how far we will get by the end of the semester: 
+## This is how far we will get by the end of this course: 
 
 ### In the first half of the course we'll learn how to simulate mobile robots, sensors, actuators. How to do mapping localization and navigation.
 
@@ -20,7 +20,7 @@
   <a href="https://www.youtube.com/watch?v=AK4aVfQVkVA"><img width="600" src="./assets/youtube-6-DoF.png"></a>  
   <a href="https://www.youtube.com/watch?v=mm2vKYH-Jy8"><img width="600" src="./assets/youtube-openmanipulator.png"></a>  
 
-### Here you see a short video about the final projects from the previous years:
+### Here you can see a short video about the final projects from the previous years:
 
 <a href="https://www.youtube.com/watch?v=uLRQJh-y9AU"><img width="600" src="./assets/projects.png"></a>
 
@@ -43,8 +43,8 @@ PICS
 1. [What is ROS(2)?](#What-is-ROS(2)?)
 2. [Required softwares](#Required-softwares)
 3. [Basics of ROS2](#Basics-of-ROS2)  
-3.1. [ROS Master](#ROS-Master)  
-3.2. [ROS Node](#ROS-Node)  
+3.1. [Running some examples](#Running-some-examples)  
+3.2. [Create a colcon workspace](#Create-a-colcon-workspace)  
 3.3. [Publisher](#Publisher)  
 3.4. [Subscriber](#Subscriber)  
 3.5. [rqt](#rqt)  
@@ -118,7 +118,7 @@ I recommend to use a graphical git client that can boost your experience with gi
 <details>
 <summary>Markdown</summary>
 
-<br>Markdown is a lightweight, plain-text formatting language used to create formatted documents. It was created by John Gruber in 2004 with the goal of being easy to read and write, using simple syntax to style text, create lists, links, images, and more. It is widely used for writing documentation, readme files, and content for static websites.
+<br>Markdown is not a standalone software but rather a lightweight, plain-text formatting language used to create formatted documents. It was created by John Gruber in 2004 with the goal of being easy to read and write, using simple syntax to style text, create lists, links, images, and more. It is widely used for writing documentation, readme files, and content for static websites.
 
 Basic Markdown Syntax
 
@@ -158,46 +158,44 @@ GitHub Flavored Markdown (GFM) is a variant of Markdown used by GitHub to provid
 - Tables of Contents
 - @mentions for users, references to issues, and pull requests using #number
 
-Most of the tips and tricks that you might need for your own project documentation can be found in the source of this readme that you read right now, feel free to use any snippets from it!
+Most of the tips and tricks that you might need for your own project documentation can be found [in the source of this readme](https://github.com/MOGI-ROS/Week-1-2-Introduction-to-ROS2/blob/main/README.md?plain=1) that you read right now, feel free to use any snippets from it!
 
 </details>
 
 <details>
 <summary>A good terminal</summary>
 
-  - Letöltés:  
-    - Windows:  
-      https://code.visualstudio.com/
-    - Linux:  
-      Snap store-ból: `sudo snap install --classic code`
-  - Javasolt extension-ök:
-    - Markdown All in One
-    - C/C++
-    - Python
-    - CMake Tools
-    - ROS
-    - Remote - SSH
-    - Remote - WSL
+<br>It's up to your choice which terminal tool would you like to use, but I strongly recommend one that support multiple split windows in a single unified window, because we will use a **lot of** terminals! On Linux, I can recommend  `terminator`:
+![alt text][image2]
+
+In case you use WSL2, the built-in Windows terminal also support multiple panes and works really well!
+![alt text][image3]
+
 </details>
 
 <details>
-<summary>And finally, ROS2 Jazzy</summary>
+<summary>And finally, install ROS2 Jazzy</summary>
 
-  - Letöltés:  
-    - Windows:  
-      https://code.visualstudio.com/
-    - Linux:  
-      Snap store-ból: `sudo snap install --classic code`
-  - Javasolt extension-ök:
-    - Markdown All in One
-    - C/C++
-    - Python
-    - CMake Tools
-    - ROS
-    - Remote - SSH
-    - Remote - WSL
+<br>ROS always had very good and detailed installed guides, it's not anything different for ROS2's Jazzy release.
+The installation steps can be found [here](https://docs.ros.org/en/jazzy/Installation/Ubuntu-Install-Debs.html), with Ubuntu 24.04 it can be installed simply through pre-built, binary `deb` packages.
+
+After installing it we have to set up our ROS2 environment with the following command:
+```bash
+source /opt/ros/jazzy/setup.bash
+```
+
+By default, we have to run this command in every new shell session we start, but there is a powerful tool in Linux for such use cases. `.bashrc` file is always in the user's home directory and it is used for user-specific settings for our shell sessions. You can edit `.bashrc` directly in a terminal window with a basic text editor, like `nano`:
+
+```bash
+david@david-ubuntu24:~$ nano .bashrc
+```
+
+Here, you can add your custom user-specific settings in the end of the file, that will be executed every time you initiate a new shell session.
+I created an [example gist](https://gist.github.com/dudasdavid/bb2366e2a68bf1401ed692e41fed04d8) that you can add to the end of your file and use it during the course.
+
+ROS2 Jazzy has [an even more detailed tutorial](https://docs.ros.org/en/jazzy/Tutorials/Beginner-CLI-Tools/Configuring-ROS2-Environment.html) about setting up your environment, you can check it out, too!
+
 </details>
-
 
 
 
@@ -205,19 +203,46 @@ VMware shared folder mount:
 /usr/bin/vmhgfs-fuse .host:/BME/ROS2-lessons /home/david/ros2_ws/src/ROS2-lessons -o subtype=vmhgfs-fuse,allow_other
 (https://www.liquidweb.com/blog/create-vmware-shared-folder/)
 
-Install ROS:
-https://docs.ros.org/en/jazzy/Installation/Ubuntu-Install-Debs.html
 
-Setup .bashrc:
-source /opt/ros/jazzy/setup.bash
-https://docs.ros.org/en/jazzy/Tutorials/Beginner-CLI-Tools/Configuring-ROS2-Environment.html
 
-Run samples:
-https://docs.ros.org/en/jazzy/Installation/Ubuntu-Install-Debs.html#try-some-examples
-ros2 run demo_nodes_cpp talker
-ros2 run demo_nodes_py listener
+
+
+
 
 # Basics of ROS2
+
+## Running some examples
+
+Your ROS2 install comes with a couple of examples as you can also read [on the install page](https://docs.ros.org/en/jazzy/Installation/Ubuntu-Install-Debs.html#try-some-examples).
+
+Let's try them!
+
+The following command starts a simple publisher. A publisher is a component that is responsible for sending messages (in this example a string) over a specific topic (in this example the topic's name is `chatter`) to other nodes in the system. It is part of the publish-subscribe communication model, where publishers send data to topics, and subscribers listen to those topics to receive the data.
+```bash
+ros2 run demo_nodes_cpp talker
+```
+
+Your output should look like this:
+```bash
+david@david-ubuntu24:~$ ros2 run demo_nodes_cpp talker
+[INFO] [1727116062.558281395] [talker]: Publishing: 'Hello World: 1'
+[INFO] [1727116063.558177802] [talker]: Publishing: 'Hello World: 2'
+[INFO] [1727116064.558010534] [talker]: Publishing: 'Hello World: 3'
+[INFO] [1727116065.557939861] [talker]: Publishing: 'Hello World: 4'
+[INFO] [1727116066.557849645] [talker]: Publishing: 'Hello World: 5'
+```
+
+Let's start a subscriber in another terminal window, which subscribes to the `chatter` topic and listens to the publisher node's messages
+
+```bash
+david@david-ubuntu24:~$ ros2 run demo_nodes_py listener
+[INFO] [1727116231.574662048] [listener]: I heard: [Hello World: 170]
+[INFO] [1727116232.560517676] [listener]: I heard: [Hello World: 171]
+[INFO] [1727116233.558907367] [listener]: I heard: [Hello World: 172]
+[INFO] [1727116234.560768278] [listener]: I heard: [Hello World: 173]
+[INFO] [1727116235.559821377] [listener]: I heard: [Hello World: 174]
+[INFO] [1727116236.559993767] [listener]: I heard: [Hello World: 175]
+```
 
 turtlesim:
 sudo apt install ros-jazzy-turtlesim
@@ -228,7 +253,7 @@ ros2 run turtlesim turtle_teleop_key
 
 RQT, rqt_graph
 
-Create colcon workspace
+## Create a colcon workspace
 mkdir -p ~/ros2_ws/src
 cd ~/ros2_ws
 
