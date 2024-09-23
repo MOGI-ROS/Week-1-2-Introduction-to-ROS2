@@ -1,13 +1,205 @@
-# Week-1-2-Introduction-to-ROS2
+[//]: # (Image References)
 
-Install Ubuntu 24.04 LTS
-https://www.youtube.com/watch?v=kDosGTdwqO0&list=LL&index=1&t=1s
+[image1]: ./assets/markdown.svg "Markdwonn"
+[image2]: ./assets/terminator.png "Terminator"
+[image3]: ./assets/vcxsrv_1.png "VcXsrv"
+[image4]: ./assets/vcxsrv_2.png "VcXsrv"
+[image5]: ./assets/vcxsrv_3.png "VcXsrv"
 
-1) Native
-2) WSL
-3) VMware fusion is free for personal use
-4) Docker
-5) ....
+# Week 1-2: Introduction to ROS(2)
+
+## This is how far we will get by the end of the semester: 
+
+### In the first half of the course we'll learn how to simulate mobile robots, sensors, actuators. How to do mapping localization and navigation.
+
+  <a href="https://www.youtube.com/watch?v=YRHxixKr6r4"><img width="600" src="./assets/youtube-navigation_2.png"></a>  
+  <a href="https://www.youtube.com/watch?v=L2L7snV4sCs"><img width="600" src="./assets/youtube-navigation.png"></a>  
+
+### In the second half of the course we'll learn about the simulation of robotic arms with direct and inverse kinematics.
+
+  <a href="https://www.youtube.com/watch?v=AK4aVfQVkVA"><img width="600" src="./assets/youtube-6-DoF.png"></a>  
+  <a href="https://www.youtube.com/watch?v=mm2vKYH-Jy8"><img width="600" src="./assets/youtube-openmanipulator.png"></a>  
+
+### Here you see a short video about the final projects from the previous years:
+
+<a href="https://www.youtube.com/watch?v=uLRQJh-y9AU"><img width="600" src="./assets/projects.png"></a>
+
+## Requirements for completing the course:
+
+Detailed description and requirements of the final project can be found on this [link](https://docs.google.com/spreadsheets/d/1gMaBODfGlU8p0b80DhkFaF4C9gJfaIIUKGdBXtmJcQI/edit?usp=sharing). 
+
+### Short summary:
+Registration deadline for projects: **week 5**  
+Submission deadline: **week 14**
+   - Project teams should consist of 3, maximum 4 members.
+   - The project submission will take place live (on Teams) in 15+5 minutes
+   - The project documentation should be in Markdown format on GitHub (no PPT required!)
+
+### Available real robots at the department:
+
+PICS
+
+# Table of Contents
+1. [What is ROS(2)?](#What-is-ROS(2)?)
+2. [Required softwares](#Required-softwares)
+3. [Basics of ROS2](#Basics-of-ROS2)  
+3.1. [ROS Master](#ROS-Master)  
+3.2. [ROS Node](#ROS-Node)  
+3.3. [Publisher](#Publisher)  
+3.4. [Subscriber](#Subscriber)  
+3.5. [rqt](#rqt)  
+3.5. [Launchfile](#Launchfile)  
+3.5. [Services](#Services)  
+3.5. [Messages](#Messages)  
+4. [Turtlesim](#Turtlesim)
+5. [Saját Turtlesim node](#Saját-Turtlesim-node)
+
+# What is ROS(2)?
+ROS, or Robot Operating System, is an open-source framework designed to facilitate the development of robotic applications. It provides a collection of tools, libraries, and conventions that simplify the process of designing complex robot behaviors across a wide variety of robotic platforms.
+
+ROS was initially developed in 2007 by the Stanford Artificial Intelligence Laboratory and continued by Willow Garage, with the goal of providing a common platform for research and development in robotics. The primary motivation was to create a standard framework that could support a broad range of robotic applications, promote code reuse, and foster collaboration within the robotics community.
+
+Key reasons for ROS development include:
+
+- **Standardization**: Creating a common platform that simplifies the integration of different hardware and software components.
+- **Modularity**: Enabling the development of modular and reusable software components (nodes) that can be easily shared and adapted for various robotic systems.
+- **Community Collaboration**: Encouraging collaboration among researchers and developers, resulting in a vast collection of tools and libraries.
+
+### Transition to ROS 2
+
+ROS 2 was developed to address the limitations of ROS 1 and meet the growing demands for industrial and commercial robotics applications. The development began around 2014 and aimed to enhance the capabilities of ROS, particularly in areas such as security, real-time performance, and support for multi-robot systems. In practice, the biggest difference is in the underlying middleware, ROS1 uses a custom transport layer and message-passing system that was not designed for real-time or distributed applications (see ROS1's [`roscore`](http://wiki.ros.org/roscore)).
+
+The latest ROS1 release is ROS Noetic which was intended to be used on Ubuntu 20.04.
+
+# Required softwares
+
+<details>
+<summary>Ubuntu 24.04 LTS</summary>
+
+<br>In the course we'll use ROS2 [Jazzy Jalisco](https://docs.ros.org/en/jazzy/index.html), which requires Ubuntu 24.04 for the smoothest operation.
+
+You have a couple of options, but the most recommended is the native install of the operating system.
+
+1) Native install
+2) Windows 11 WSL2 (Windows Subsystem Linux): [instructions](https://documentation.ubuntu.com/wsl/en/latest/guides/install-ubuntu-wsl2/)
+3) Virtual machine, recommended: VMware fusion is [now free for personal use](https://blogs.vmware.com/teamfusion/2024/05/fusion-pro-now-available-free-for-personal-use.html)
+4) Docker container
+5) Using an online environment e.g. [The Construct](https://www.theconstruct.ai)
+
+The options 1. and 2. are the most preferred solutions, in an exotic case like mine, if you want to install Ubuntu 24.04 in virtual machine on Apple silicon [this](https://www.youtube.com/watch?v=kDosGTdwqO0) is a very good tutorial.
+
+</details>
+
+<details>
+<summary>Visual Studio Code</summary>
+
+<br>The recommended code editor during the course is [Visual Studio Code](https://code.visualstudio.com/docs/setup/setup-overview), but it's up to your choice if you want to go with your different editor. Depending on your Ubuntu install method you might install it natively on Ubuntu, in your virtual environment or on your host operating system.
+
+Recommended extensions to install:
+- Markdown All in One
+- C/C++
+- Python
+- CMake Tools
+- Remote - SSH - if you work on physical robots, too
+- Remote - WSL - if you do the course using WSL2
+</details>
+
+<details>
+<summary>GitHub and a git client</summary>
+
+<br>The course materials are available on GitHub, and the submissions of your final projects shall also use GitHub. *You'll need a very good excuse why to use alternative git solutions like GitLab.*
+
+So I encourage everyone to [register your GitHub accounts](https://github.com/home), and if you are there don't forget to [sign up for the GitHub Student Developer Pack](https://education.github.com/pack) which gives you a bunch of powerful developer tools for free.
+
+I recommend to use a graphical git client that can boost your experience with git, in my optinion the best one is [GitKraken](https://www.gitkraken.com), which is not a free software, but you get the pro version as part of the GitHub Student Developr Pack! If you prefer using git as a *cli* tool then no worries, it's absoluetely all right.
+
+</details>
+
+<details>
+<summary>Markdown</summary>
+
+<br>Markdown is a lightweight, plain-text formatting language used to create formatted documents. It was created by John Gruber in 2004 with the goal of being easy to read and write, using simple syntax to style text, create lists, links, images, and more. It is widely used for writing documentation, readme files, and content for static websites.
+
+Basic Markdown Syntax
+
+- Headings: `#` Heading 1, `##` Heading 2, etc.
+- Bold: `**bold text**` or `__bold text__`
+- Italic: `*italic text*` or `_italic text_`
+- Lists:
+    - Unordered: `- Item` or `* Item`
+	- Ordered: `1. Item`
+	- Links: `[Link text](URL)`
+	- Images: `![Alt text](Image URL)`
+	- Code: Inline code or code blocks using triple backticks (```)
+
+GitHub Flavored Markdown (GFM)
+
+GitHub Flavored Markdown (GFM) is a variant of Markdown used by GitHub to provide additional features and syntax that are not available in standard Markdown. It includes:
+
+- Tables:
+    ```
+    | Column 1 | Column 2 |
+    |----------|----------|
+    | Row 1    | Data     |
+    | Row 2    | Data     |
+    ```
+- Task lists:
+    ```
+    - [x] Task 1
+    - [ ] Task 2
+    ```
+- Strikethrough: `~~strikethrough text~~`
+- Syntax highlighting in a specific language:
+    ```
+    ```python
+    def hello_world():
+    print("Hello, world!")
+    ```
+- Tables of Contents
+- @mentions for users, references to issues, and pull requests using #number
+
+Most of the tips and tricks that you might need for your own project documentation can be found in the source of this readme that you read right now, feel free to use any snippets from it!
+
+</details>
+
+<details>
+<summary>A good terminal</summary>
+
+  - Letöltés:  
+    - Windows:  
+      https://code.visualstudio.com/
+    - Linux:  
+      Snap store-ból: `sudo snap install --classic code`
+  - Javasolt extension-ök:
+    - Markdown All in One
+    - C/C++
+    - Python
+    - CMake Tools
+    - ROS
+    - Remote - SSH
+    - Remote - WSL
+</details>
+
+<details>
+<summary>And finally, ROS2 Jazzy</summary>
+
+  - Letöltés:  
+    - Windows:  
+      https://code.visualstudio.com/
+    - Linux:  
+      Snap store-ból: `sudo snap install --classic code`
+  - Javasolt extension-ök:
+    - Markdown All in One
+    - C/C++
+    - Python
+    - CMake Tools
+    - ROS
+    - Remote - SSH
+    - Remote - WSL
+</details>
+
+
+
 
 VMware shared folder mount:
 /usr/bin/vmhgfs-fuse .host:/BME/ROS2-lessons /home/david/ros2_ws/src/ROS2-lessons -o subtype=vmhgfs-fuse,allow_other
@@ -24,6 +216,8 @@ Run samples:
 https://docs.ros.org/en/jazzy/Installation/Ubuntu-Install-Debs.html#try-some-examples
 ros2 run demo_nodes_cpp talker
 ros2 run demo_nodes_py listener
+
+# Basics of ROS2
 
 turtlesim:
 sudo apt install ros-jazzy-turtlesim
