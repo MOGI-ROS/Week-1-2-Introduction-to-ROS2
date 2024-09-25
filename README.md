@@ -3,8 +3,10 @@
 [image1]: ./assets/robots.png "Robots"
 [image2]: ./assets/terminator.png "Terminator"
 [image3]: ./assets/windows-terminal.png "Terminal"
-[image4]: ./assets/vcxsrv_2.png "VcXsrv"
-[image5]: ./assets/vcxsrv_3.png "VcXsrv"
+[image4]: ./assets/rqt_graph_1.png "rqt_graph"
+[image5]: ./assets/rqt_1.png "rqt"
+[image6]: ./assets/turtlesim_1.png "turtlesim"
+[image7]: ./assets/rqt_graph_2.png "rqt_graph"
 
 # Week 1-2: Introduction to ROS2
 
@@ -88,6 +90,10 @@ You have a couple of options, but the most recommended is the native install of 
 
 The options 1. and 2. are the most preferred solutions, in an exotic case like mine, if you want to install Ubuntu 24.04 in virtual machine on Apple silicon [this](https://www.youtube.com/watch?v=kDosGTdwqO0) is a very good tutorial.
 
+>Pro tip if you want to mount directories from your host system into your guest Ubuntu 24.04 running in VMware fusion, more details [on this link](https://www.liquidweb.com/blog/create-vmware-shared-folder/):
+>```bash
+>/usr/bin/vmhgfs-fuse .host:/BME/ROS2-lessons /home/david/ros2_ws/src/ROS2-lessons -o subtype=vmhgfs-fuse,allow_other
+>```
 </details>
 
 <details>
@@ -197,18 +203,6 @@ ROS2 Jazzy has [an even more detailed tutorial](https://docs.ros.org/en/jazzy/Tu
 
 </details>
 
-
-
-VMware shared folder mount:
-/usr/bin/vmhgfs-fuse .host:/BME/ROS2-lessons /home/david/ros2_ws/src/ROS2-lessons -o subtype=vmhgfs-fuse,allow_other
-(https://www.liquidweb.com/blog/create-vmware-shared-folder/)
-
-
-
-
-
-
-
 # Basics of ROS2
 
 ## Running some examples
@@ -244,23 +238,135 @@ david@david-ubuntu24:~$ ros2 run demo_nodes_py listener
 [INFO] [1727116236.559993767] [listener]: I heard: [Hello World: 175]
 ```
 
-turtlesim:
-sudo apt install ros-jazzy-turtlesim
+### Useful cli and graphical tools
+Now both nodes are running we can try a few useful tools. The first on let us know what kind of nodes are running in your ROS2 system:
 
+```bash
+ros2 node list
+```
+
+Which gives us the following output:
+```bash
+david@david-ubuntu24:~/ros2_ws$ ros2 node list
+/listener
+/talker
+```
+
+If we want to know more about one of our nodes, we can use the `ros2 node info /node` command:
+```bash
+david@david-ubuntu24:~/ros2_ws$ ros2 node info /listener 
+/listener
+  Subscribers:
+    /chatter: std_msgs/msg/String
+  Publishers:
+    /parameter_events: rcl_interfaces/msg/ParameterEvent
+    /rosout: rcl_interfaces/msg/Log
+  Service Servers:
+    /listener/describe_parameters: rcl_interfaces/srv/DescribeParameters
+    /listener/get_parameter_types: rcl_interfaces/srv/GetParameterTypes
+    /listener/get_parameters: rcl_interfaces/srv/GetParameters
+    /listener/get_type_description: type_description_interfaces/srv/GetTypeDescription
+    /listener/list_parameters: rcl_interfaces/srv/ListParameters
+    /listener/set_parameters: rcl_interfaces/srv/SetParameters
+    /listener/set_parameters_atomically: rcl_interfaces/srv/SetParametersAtomically
+  Service Clients:
+
+  Action Servers:
+
+  Action Clients:
+```
+
+At the moment the most important detail we can get about a node if it's subscribing or publishing to any topic. Let we'll learn more about parameters and services.
+
+In a very similar way we can also list all of our topics with `ros2 topic list` command:
+```bash
+david@david-ubuntu24:~/ros2_ws$ ros2 topic list 
+/chatter
+/parameter_events
+/rosout
+```
+
+And we can get more details about a certain topic with the `ros2 topic infor /topic` command:
+```bash
+david@david-ubuntu24:~/ros2_ws$ ros2 topic info /chatter 
+Type: std_msgs/msg/String
+Publisher count: 1
+Subscription count: 1
+```
+
+Another powerful tool is `rqt_graph` that helps us visualizing the nodes and topics in a graph.
+![alt text][image4]
+
+`rqt_graph` can be used as a standalone tool, or part of `rqt` which can be used to build a complete dashboard to mintor and control your nodes. We'll spend a lot of time with it, at the moment let's just see the message monitoring function:
+![alt text][image5]
+
+### Let's run more examples: turtlesim
+Let's see another built in example which is a simple 2D plotter game.
+> In a case it's not automatically installed, you can install it with the following command:
+> ```bash
+> sudo apt install ros-jazzy-turtlesim
+> ```
+
+To run the main node just execute the follwoing command:
+```bash
 ros2 run turtlesim turtlesim_node
+```
 
+And in another terminal start its remote controller, you can simply drive the turtle with the arrows:
+```bash
 ros2 run turtlesim turtle_teleop_key
+```
+![alt text][image6]
 
-RQT, rqt_graph
+We can use the same tools as before to see the running nodes and topics, here is how does it look like in `rqt_graph`.
+![alt text][image7]
+
+>We should notice two important things:
+>
+>1. turtlesim is more complex than the previous example with multiple services and parameters that we'll check in the end of this lesson.
+>2. the turtle is controlled with a `cmd_vel` message which is a 6D vector in space. We'll use this exact same message type in the future to drive our simulated robots.
+
+Now let's move on to create our own nodes!
 
 ## Create a colcon workspace
+
+To create, build and run custom nodes we need packages, but first we need a workspace where we'll maintain our future packages.
+There are 2 new terms we must learn about ROS2 workspaces:
+
+1. `ament` provides the underlying build system and tools specifically for ROS2 packages. `ament_cmake` is a CMake-based build system for C/C++ nodes and `ament_python` provides the tools for packing and installing python nodes and libraries.
+2. `colcon` (COmmand Line COLlectioN) is a general-purpose tool to build and manage entire workspaces with various build systems, including ament, cmake, make, and more. 
+
+It means that our ROS2 workspaces will be `colcon workspaces` which in the backround will use `ament` for building the individual packages.
+
+>If you have experience with ROS1, `colcon` and `ament` replaces the old `catkin` tools.
+
+Let's create our workspace inside our user's home directory:
+```bash
 mkdir -p ~/ros2_ws/src
 cd ~/ros2_ws
+```
 
-Create our first python package:
+>A workspace always must contain a `src` folder where we maintain the source files of our packages, later, during building colcon will create further folders for binaries and other output files.
+
+Let's go into the `src` folder and create our first python package
+```bash
 ros2 pkg create --build-type ament_python bme_ros2_tutorials_py
+```
+> During package creation we should define if it's a C/C++ (`ament_cmake`) or a python (`ament_python`) package. If we don't do it, the default is always `ament_cmake`!
 
-Create hello world
+Let's create a `scripts` folder inside our new package, add an empty file `__init__.py` and add our first node, `hello_world.py`. At this point our workspace should look like this (if it was not built yet):
+```bash
+david@david-ubuntu24:~/ros2_ws$ tree -L 4
+.
+└── src
+    └── bme_ros2_tutorials_py
+        └── scripts
+            ├── __init__.py
+            └── hello_world.py
+```
+
+## Let's write the simplest possible `hello_world` in python:
+
 ```python
 #!/usr/bin/env python3
 
@@ -273,39 +379,53 @@ if __name__ == '__main__':
     main()
 ```
 
-Edit setup.py
+Although this is a python script that doesn't require any build, we have to make sure that `ament` will copy and install our node. Note that we are not running python scripts directly from its source folder!
 
-1: packages
+Let's edit `setup.py` that was automatically generated when we defined that our package will use `ament_python`.
 
+1. Add an entry point for every python node:
 
-```python
+    ```python
+    ...
+        entry_points={
+            'console_scripts': [
+                'py_hello_world = scripts.hello_world:main'
+            ],
+        },
+    ...
+    ```
+
+2. If your scripts folder already has a `__init__.py` file, `find_packages()` should find it, but if it doesn't happen you can anytime simply edit packages variable like this:
+    ```python
+    ...
     #packages=find_packages(exclude=['test']),
     packages=[package_name, 'scripts'],
+    ...
+    ```
+
+After this our first node in our first package is ready for build! Build must be initiated always in the root of our workspace!
+```bash
+cd ~/ros2_ws
 ```
 
-
-2: entry point
-
-```python
-    entry_points={
-        'console_scripts': [
-            'py_hello_world = scripts.hello_world:main'
-        ],
-    },
+And here we can execute the `colcon build` command.
+After a successful built we have to update our enivornment with the freshly built package, to do this we have to run the following command:
+```bash
+source install/setup.bash
 ```
 
-build:
-`colcon build`
-
-source: source install/setup.bash
-this we add to .bashrc:
+As we did with the base ROS2 environment we can add this to the `.bashrc`, too:
+```bash
 source ~/ros2_ws/install/setup.bash
+```
 
-run it:
+And now we are ready to run our first node:
+```bash
 ros2 run bme_ros2_tutorials_py py_hello_world
+```
 
 
-Upgrade hello world to ROS hello world
+Athough we could run our first node, it was a plain python script, not using any components of ROS. Let's upgrade hello world to a more *ROS-like* hello world:
 
 ```python
 #!/usr/bin/env python3
@@ -315,7 +435,7 @@ import rclpy # Import ROS2 python interface
 def main(args=None):
     rclpy.init(args=args)                          # Initialize the ROS2 python interface
     node = rclpy.create_node('python_hello_world') # Node constructor, give it a name
-    node.get_logger().info("Hello, ROS2!")          # Use the ROS2 node's built in logger
+    node.get_logger().info("Hello, ROS2!")         # Use the ROS2 node's built in logger
     node.destroy_node()                            # Node destructor
     rclpy.shutdown()                               # Shut the ROS2 python interface down
 
@@ -324,9 +444,13 @@ if __name__ == '__main__':
     main()
 ```
 
+We don't have to do anything with `setup.py` but we have to re-build the colcon workspace!
+After that we can run our node:
+```bash
 ros2 run bme_ros2_tutorials_py py_hello_world
+```
 
-Create our python publisher
+## Create a python publisher
 ```python
 #!/usr/bin/env python3
 import rclpy
@@ -748,6 +872,13 @@ def generate_launch_description():
     return ld
 ```
 
+
+# Recap of useful ROS2 commands
+
+ros2 node list, info
+ros2 topic list, info, echo
+rqt
+rqt_graph
 
 Install Gazebo:
 compatibility: https://gazebosim.org/docs/harmonic/ros_installation/
