@@ -7,6 +7,7 @@
 [image5]: ./assets/rqt_1.png "rqt"
 [image6]: ./assets/turtlesim_1.png "turtlesim"
 [image7]: ./assets/rqt_graph_2.png "rqt_graph"
+[image8]: ./assets/rqt_2.png "rqt"
 
 # Week 1-2: Introduction to ROS2
 
@@ -42,17 +43,18 @@ Submission deadline: **week 14**
 PICS
 
 # Table of Contents
-1. [What is ROS(2)?](#What-is-ROS(2)?)
-2. [Required softwares](#Required-softwares)
-3. [Basics of ROS2](#Basics-of-ROS2)  
-3.1. [Running some examples](#Running-some-examples)  
-3.2. [Create a colcon workspace](#Create-a-colcon-workspace)  
-3.3. [Publisher](#Publisher)  
-3.4. [Subscriber](#Subscriber)  
-3.5. [rqt](#rqt)  
-3.5. [Launchfile](#Launchfile)  
-3.5. [Services](#Services)  
-3.5. [Messages](#Messages)  
+1. [What is ROS(2)?](#what-is-ros2)
+2. [Required softwares](#required-softwares)
+3. [Basics of ROS2](#basics-of-ros2)  
+3.1. [Running some examples](#running-some-examples)  
+3.2. [Create a colcon workspace](#create-a-colcon-workspace)  
+3.3. [Let's write the simplest possible `hello_world` in python](#lets-write-the-simplest-possible-hello_world-in-python)  
+3.4. [Create a python publisher](#create-a-python-publisher)  
+3.5. [Create a C++ publisher](#create-a-c-publisher)  
+3.6. [rqt](#rqt)  
+3.7. [Launchfile](#Launchfile)  
+3.8. [Services](#Services)  
+3.9. [Messages](#Messages)  
 4. [Turtlesim](#Turtlesim)
 5. [Saját Turtlesim node](#Saját-Turtlesim-node)
 
@@ -379,7 +381,7 @@ if __name__ == '__main__':
     main()
 ```
 
-Although this is a python script that doesn't require any build, we have to make sure that `ament` will copy and install our node. Note that we are not running python scripts directly from its source folder!
+Although this is a python script that doesn't require any compilation, we have to make sure that `ament` will pack, copy and install our node. Note that we are not running python scripts directly from its source folder!
 
 Let's edit `setup.py` that was automatically generated when we defined that our package will use `ament_python`.
 
@@ -451,6 +453,13 @@ ros2 run bme_ros2_tutorials_py py_hello_world
 ```
 
 ## Create a python publisher
+
+Let's make our first publisher in python, we create a new file in `scripts` folder: `publisher.py`.
+>We can create files in Linux in several different ways, just a few examples:
+> - Right click in the folder using the desktop environment
+> - Through the development environment, in our case Visual Studio Code
+> - From command line in the current folder using the `touch` command: `touch publisher.py`
+
 ```python
 #!/usr/bin/env python3
 import rclpy
@@ -480,19 +489,43 @@ if __name__ == '__main__':
     main()
 ```
 
-Edit setup.py
+We have to edit `setup.py`, registering our new node as entry point:
+```python
+...
+    entry_points={
+        'console_scripts': [
+            'py_hello_world = scripts.hello_world:main',
+            'py_publisher = scripts.publisher:main'
+        ],
+    },
+...
+```
 
-run it:
-ros2 run bme_ros2_tutorials_py py_publisher
+Don't forget to rebuil the workspace and we can run our new node:
 
+```bash
+david@david-ubuntu24:~$ ros2 run bme_ros2_tutorials_py py_publisher
+[INFO] [1727526317.470055907] [python_publisher]: Publishing: "Hello, world: 0"
+[INFO] [1727526317.971461827] [python_publisher]: Publishing: "Hello, world: 1"
+[INFO] [1727526318.473896872] [python_publisher]: Publishing: "Hello, world: 2"
+[INFO] [1727526318.977439178] [python_publisher]: Publishing: "Hello, world: 3"
+```
 
-let's see it with echo and rqt
+We can observe the published topic through `rqt`'s topic monitor:
+![alt text][image8]
 
-ros2 topic echo /topic
+Or we can use a simple but powerful tool, the `topic echo`:
+```bash
+david@david-ubuntu24:~$ ros2 topic echo /topic 
+data: 'Hello, world: 23'
+---
+data: 'Hello, world: 24'
+---
+data: 'Hello, world: 25'
+```
 
-rqt_image
+The above publisher node is very simple and looks exactly how do we impelent nodes in ROS1. But ROS2 provides more powerful API functions and also places a greater emphasis on object-oriented programming. So let's create another publisher but in a more OOP way:
 
-Let's make it more OOP in a new file:
 ```python
 #!/usr/bin/env python3
 import rclpy
@@ -525,18 +558,20 @@ if __name__ == "__main__":
     main()
 ```
 
-Edit setup.py, run it:
+As we did previously, edit `setup.py`, build the workspace and run our new node:
+```bash
 ros2 run bme_ros2_tutorials_py py_publisher_oop
+```
 
+## Create a C++ publisher
 
-Let's make it in cpp, create a new package, it's less convinient in ROS2 to mix C++ and Python nodes within a package...
-it's possible though, see example:
-...
+In ROS1 it was very straightforward to mix nodes written in different languages. In ROS2 although it's not impossible, but requires more manual editing of package metadata because we define for `ament` what is the package's build type. To keep it simple, let's create a new package, but [on this link](TODO:) you can see an example how to mix both python and C++ nodes within the same package.
 
-Create new package:
+```bash
 ros2 pkg create --build-type ament_cmake bme_ros2_tutorials_cpp
+```
 
-Cpp publisher here
+Let's create `publisher.cpp` in `src` folder of the new package, this follows the same object-oriented patterns as our previous python node, including using a ROS2 timer.
 
 ```cpp
 #include "rclcpp/rclcpp.hpp"
@@ -576,7 +611,7 @@ int main(int argc, char **argv)
 }
 ```
 
-Edit the CMakeLists.txt:
+To properly set up our node in the package's metadata we have to edit the `CMakeLists.txt`:
 ```bash
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
@@ -873,12 +908,35 @@ def generate_launch_description():
 ```
 
 
-# Recap of useful ROS2 commands
+# Recap
+
+### Useful Linux (Ubuntu) commands
+
+sudo
+apt update
+apt upgrade
+apt install
+nano
+ls
+cd
+~
+mkdir
+rm (-rf) *files-or-folders*
+touch *file*
+chmod +x *file*
+tree
+
+### Useful ROS2 commands
 
 ros2 node list, info
 ros2 topic list, info, echo
+ros2 run *package* *node*
+ros2 pkg create
 rqt
 rqt_graph
+
+colcon build
+source /opt/ros/jazzy/setup.bash
 
 Install Gazebo:
 compatibility: https://gazebosim.org/docs/harmonic/ros_installation/
