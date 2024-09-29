@@ -9,7 +9,8 @@ def generate_launch_description():
         package="bme_ros2_tutorials_py",
         executable="py_publisher_with_param",
         name="my_publisher",
-        parameters=[{"published_text": "Parameter_from_launch"}]
+        parameters=[{"published_text": "Parameter_from_launch"},
+                    {"timer_period": 0.5}]
     )
 
 
