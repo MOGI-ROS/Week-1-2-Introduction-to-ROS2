@@ -14,7 +14,8 @@ def main(args=None):
     # and assign the callback function that will be invoked when a message arrives to the topic
     # with a queue size of 10 which determines how many incoming messages can be held in the subscriber’s
     # queue while waiting to be processed by the callback function
-    subscriber = node.create_subscription(String, 'topic', subscriber_callback, 10) 
+    subscriber = node.create_subscription(String, 'topic', subscriber_callback, 10)
+    node.get_logger().info("Subsciber has been started.")
 
     rclpy.spin(node)
 

@@ -5,8 +5,8 @@ package_name = 'bme_ros2_tutorials_py'
 setup(
     name=package_name,
     version='0.0.0',
-    #packages=find_packages(exclude=['test']),
-    packages=[package_name, 'scripts'],
+    packages=find_packages(exclude=['test']),
+    #packages=[package_name, 'scripts'],
     data_files=[
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
@@ -25,7 +25,8 @@ setup(
             'py_publisher = scripts.publisher:main',
             'py_publisher_oop = scripts.publisher_oop:main',
             'py_subscriber = scripts.subscriber:main',
-            'py_subscriber_oop = scripts.subscriber_oop:main'
+            'py_subscriber_oop = scripts.subscriber_oop:main',
+            'py_publisher_with_param = scripts.publisher_with_parameter:main',
         ],
     },
 )
