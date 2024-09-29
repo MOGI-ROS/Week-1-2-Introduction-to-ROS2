@@ -62,7 +62,17 @@ PICS
 4. [Parameters](#parameters)  
 4.1. [Set the parameter from a launchfile](#set-the-parameter-from-a-launchfile)  
 4.2. [A more advanced example for setting parameters](#a-more-advanced-example-for-setting-parameters)  
-5. [Saját Turtlesim node](#Saját-Turtlesim-node)
+5. [Services](#services)  
+5.1. [Service server](#service-server)  
+5.2. [Service client](#service-client)  
+5.3. [Use services and parameters with turtlesim](#use-services-and-parameters-with-turtlesim)  
+6. [Recap](#recap)  
+6.1. [Useful Linux commands](#useful-linux-commands)  
+6.2. [Useful ROS2 commands](#useful-ros2-commands)  
+
+
+
+
 
 # What is ROS(2)?
 ROS, or Robot Operating System, is an open-source framework designed to facilitate the development of robotic applications. It provides a collection of tools, libraries, and conventions that simplify the process of designing complex robot behaviors across a wide variety of robotic platforms.
@@ -220,6 +230,11 @@ Your ROS2 install comes with a couple of examples as you can also read [on the i
 Let's try them!
 
 The following command starts a simple publisher. A publisher is a component that is responsible for sending messages (in this example a string) over a specific topic (in this example the topic's name is `chatter`) to other nodes in the system. It is part of the publish-subscribe communication model, where publishers send data to topics, and subscribers listen to those topics to receive the data.
+
+> Publish-subscribe models are asynchronous, one-to-many or many-to-many interaction where the publishers don't know how many publishers there are (if any). Therefore publisher never expects any response or confirmation from the subscribers.
+
+Now, let1s run the demo publisher:
+
 ```bash
 ros2 run demo_nodes_cpp talker
 ```
@@ -1260,12 +1275,16 @@ david@david-ubuntu24:~$ ros2 run bme_ros2_tutorials_py py_publisher_with_param
 
 
 
-## Use services and parameters from turtlesim
+## Service server
+
+## Service client
+
+## Use services and parameters with turtlesim
 
 
 # Recap
 
-### Useful Linux (Ubuntu) commands
+## Useful Linux commands
 
 sudo
 apt update
@@ -1281,7 +1300,7 @@ touch *file*
 chmod +x *file*
 tree
 
-### Useful ROS2 commands
+## Useful ROS2 commands
 
 ros2 node list, info
 ros2 topic list, info, echo
