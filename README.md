@@ -8,6 +8,10 @@
 [image6]: ./assets/turtlesim_1.png "turtlesim"
 [image7]: ./assets/rqt_graph_2.png "rqt_graph"
 [image8]: ./assets/rqt_2.png "rqt"
+[image9]: ./assets/rqt_graph_3.png "rqt_graph"
+[image10]: ./assets/rqt_graph_4.png "rqt_graph"
+[image11]: ./assets/rqt_graph_5.png "rqt_graph"
+[image12]: ./assets/rqt_graph_6.png "rqt_graph"
 
 # Week 1-2: Introduction to ROS2
 
@@ -51,11 +55,13 @@ PICS
 3.3. [Let's write the simplest possible `hello_world` in python](#lets-write-the-simplest-possible-hello_world-in-python)  
 3.4. [Create a python publisher](#create-a-python-publisher)  
 3.5. [Create a C++ publisher](#create-a-c-publisher)  
-3.6. [rqt](#rqt)  
-3.7. [Launchfile](#Launchfile)  
-3.8. [Services](#Services)  
-3.9. [Messages](#Messages)  
-4. [Turtlesim](#Turtlesim)
+3.6. [Create a python subscriber](#create-a-python-subscriber)  
+3.7. [Create a C++ subscriber](#create-a-c-subscriber)  
+3.8. [Launchfiles](#launchfiles)  
+3.9. [Remap](#remap)  
+4. [Parameters](#parameters)  
+4.1. [Set the parameter from a launchfile](#set-the-parameter-from-a-launchfile)  
+4.2. [A more advanced example for setting parameters](#a-more-advanced-example-for-setting-parameters)  
 5. [Saját Turtlesim node](#Saját-Turtlesim-node)
 
 # What is ROS(2)?
@@ -429,7 +435,7 @@ ros2 run bme_ros2_tutorials_py py_hello_world
 ```
 
 
-Athough we could run our first node, it was a plain python script, not using any components of ROS. Let's upgrade hello world to a more *ROS-like* hello world:
+Athough we could run our first node, it was a plain python script, not using any components of ROS. Let's upgrade hello world to a more *ROS-like* hello world. We import the `rclpy` which is the ROS2 python API and we start using the most basic functions of `rclpy` like `init()`, `create_node()` and `shutdown()`. If you want to already deep-dive in the the API functions you can find more details [here](https://docs.ros.org/en/jazzy/Concepts/Basic/About-Client-Libraries.html#the-rclpy-package).
 
 ```python
 #!/usr/bin/env python3
@@ -461,6 +467,8 @@ Let's make our first publisher in python, we create a new file in `scripts` fold
 > - Right click in the folder using the desktop environment
 > - Through the development environment, in our case Visual Studio Code
 > - From command line in the current folder using the `touch` command: `touch publisher.py`
+
+We start expanding the usage of the ROS2 API with publishing related functions.
 
 ```python
 #!/usr/bin/env python3
@@ -526,7 +534,7 @@ data: 'Hello, world: 24'
 data: 'Hello, world: 25'
 ```
 
-The above publisher node is very simple and looks exactly how do we impelent nodes in ROS1. But ROS2 provides more powerful API functions and also places a greater emphasis on object-oriented programming. So let's create another publisher but in a more OOP way:
+The above publisher node is very simple and looks exactly how do we impelent nodes in ROS1. But ROS2 provides more powerful API functions and also places a greater emphasis on object-oriented programming. So let's create another publisher but in a more OOP way and using the timer functions of the ROS2 API. The other important API function is `rclpy.spin(node)` which keeps the node running until we don't force quit it with `ctrl+c`.
 
 ```python
 #!/usr/bin/env python3
@@ -573,7 +581,7 @@ In ROS1 it was very straightforward to mix nodes written in different languages.
 ros2 pkg create --build-type ament_cmake bme_ros2_tutorials_cpp
 ```
 
-Let's create `publisher.cpp` in `src` folder of the new package, this follows the same object-oriented patterns as our previous python node, including using a ROS2 timer.
+Let's create `publisher.cpp` in `src` folder of the new package, this follows the object-oriented patterns as our previous python node, including the ROS2 timer. This time we work with [the ROS2 C++ API](https://docs.ros.org/en/jazzy/Concepts/Basic/About-Client-Libraries.html#the-rclcpp-package), `rclcpp`, the available API functions are pretty much identical to the `rclpy`.
 
 ```cpp
 #include "rclcpp/rclcpp.hpp"
@@ -614,7 +622,7 @@ int main(int argc, char **argv)
 ```
 
 To properly set up our node in the package's metadata files we have to edit the `CMakeLists.txt`:
-```bash
+```cmake
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
 
@@ -625,13 +633,20 @@ install(TARGETS
   publisher_cpp
   DESTINATION lib/${PROJECT_NAME})
 ```
-build, run:
+
+After that we can build the workspace with `colcon build`, since it's a new package we have to source the environment and after the we can run our new node:
+```bash
 ros2 run bme_ros2_tutorials_cpp publisher_cpp
+```
 
+> If sourcing the environment of your workspace is already in the `.bashrc` it's just easier to close and open a new terminal session.
 
-echo, rqt
+We can use the same tools as before to observe the published data by our new C++ node like `topic list`, `topic echo` or a graphical tool like `rqt`.
 
-create python subscriber
+## Create a python subscriber
+
+Let's create a new file `subscriber.py` in the scripts folder of our python package. First let's make the very simple implementation and after that we'll implement a more OOP version of it. Here we extend our knowledge with more API functions related to subscriptions.
+
 ```python
 #!/usr/bin/env python3
 import rclpy
@@ -650,6 +665,7 @@ def main(args=None):
     # with a queue size of 10 which determines how many incoming messages can be held in the subscriber’s
     # queue while waiting to be processed by the callback function
     subscriber = node.create_subscription(String, 'topic', subscriber_callback, 10) 
+    node.get_logger().info("Subsciber has been started.")
 
     rclpy.spin(node)
 
@@ -661,12 +677,58 @@ if __name__ == '__main__':
     main()
 ```
 
-Add node to setup.py
-build
-run:
+Add the node to the `setup.py` file as a new entry point
+
+```python
+...
+    entry_points={
+        'console_scripts': [
+            'py_hello_world = scripts.hello_world:main',
+            'py_publisher = scripts.publisher:main',
+            'py_publisher_oop = scripts.publisher_oop:main',
+            'py_subscriber = scripts.subscriber:main'
+        ],
+    },
+...
+```
+
+Then, re-build the workspace and we can start using our new node!
+
+```bash
+david@david-ubuntu24:~$ ros2 run bme_ros2_tutorials_py py_subscriber
+[INFO] [1727606328.416973729] [python_subscriber]: Subsciber has been started.
 
 
-create oop subscriber based on our previous template
+```
+
+If we don't start a publisher, then our subscriber is just keep listening to the `/topic` but the callback function is not invoked. The node doesn't stop running because of the `rclpy.spin(node)` API function.
+
+Let's start our C++ publisher in another terminal window:
+```bash
+david@david-ubuntu24:~$ ros2 run bme_ros2_tutorials_cpp publisher_cpp 
+[INFO] [1727606744.184678739] [cpp_publisher]: CPP publisher has been started.
+[INFO] [1727606744.685934650] [cpp_publisher]: Publishing: 'Hello, world: 0'
+[INFO] [1727606745.185073828] [cpp_publisher]: Publishing: 'Hello, world: 1'
+[INFO] [1727606745.686288921] [cpp_publisher]: Publishing: 'Hello, world: 2'
+[INFO] [1727606746.186169881] [cpp_publisher]: Publishing: 'Hello, world: 3'
+```
+
+And let's see what happens with the subscriber! It's subscription callback function is invoked every time when the publisher puts a data onto the `/topic`.
+```bash
+david@david-ubuntu24:~/ros2_ws$ ros2 run bme_ros2_tutorials_py py_subscriber
+[INFO] [1727606614.099180007] [python_subscriber]: Subsciber has been started.
+[INFO] [1727606744.695260304] [python_subscriber]: I heard: Hello, world: 0
+[INFO] [1727606745.187956805] [python_subscriber]: I heard: Hello, world: 1
+[INFO] [1727606745.689289484] [python_subscriber]: I heard: Hello, world: 2
+[INFO] [1727606746.188467429] [python_subscriber]: I heard: Hello, world: 3
+```
+
+We can also observe it with `rqt_graph`:
+![alt text][image9]
+
+> And we can also observe the language agnostic approach of ROS2, without any additional effort its middleware provides the interface between the 2 nodes which were written in different programmin languages.
+
+Let's make our subscriber more OOP using our previous template from the supplier. Compared to the OOP publisher we need to replace the timer callback with a subscription callback and that's all!
 ```python
 #!/usr/bin/env python3
 import rclpy
@@ -693,10 +755,11 @@ if __name__ == "__main__":
     main()
 ```
 
-rqt, rqt_graph, language agnostic pub-sub
-PIC!
 
-create cpp subscriber
+## Create a C++ subscriber
+
+Now let's create a new file in the `src` directory of the `bme_ros2_tutorials_cpp`, we can name it `subscriber.cpp`.
+
 ```cpp
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
@@ -728,17 +791,40 @@ int main(int argc, char **argv)
     return 0;
 }
 ```
+Add it to the `CMakeLists.txt`:
+```cmake
+add_executable(publisher_cpp src/publisher.cpp)
+add_executable(subscriber_cpp src/subscriber.cpp)
+ament_target_dependencies(publisher_cpp rclcpp std_msgs)
+ament_target_dependencies(subscriber_cpp rclcpp std_msgs)
 
-create launchfiles in a launch package withou specifying any build type (it sets it up as cmake package)
+install(TARGETS
+  publisher_cpp
+  subscriber_cpp
+  DESTINATION lib/${PROJECT_NAME})
+```
+
+Re-build the workspace and we can try the new node. Let's start also a publisher and observe the behavior of the new C++ subscriber with the tools we already know!
+
+## Launchfiles
+
+As you noticed with the previous examples we have to use as many terminals as many nodes we start. With a simple publisher and subscriber this isn't really a problem, but in more complex robotic systems, it's quite common to use ROS nodes in the range of hundreds. Therefore ROS provides an efficient interface to launch multiple nodes together and even change their topics or parameters during launch time instead of changing the actuals nodes themselves. 
+
+Compared to ROS1 it's also slightly more complicated to bundle these launchfiles with our nodes, so as a best practice, I recommend creating an individual pakage only for your launcfiles.
+
+Let's create a new package without specifying the build type (by default it's `ament_cmake`).
+
+```bash
 ros2 pkg create bme_ros2_tutorials_bringup
+```
 
-Create a launch folder
-mkdir launch
-
+Now let's create a `launch` folder within this new package.
 We can freely delete include and src folders:
+```bash
 rm -rf include/ src/
+```
 
-Add to CMakeLists.txt:
+Add the following to the `CMakeLists.txt` to install the content of `launch` when we build the workspce:
 ```bash
 install(DIRECTORY
   launch
@@ -746,11 +832,12 @@ install(DIRECTORY
 )
 ```
 
-
-Create a new launch file, publisher_subscriber.py
+Create a new launch file, and let's call it `publisher_subscriber.py`, in ROS2 the launchfiles are special python scripts instead of the `XML` files we used in ROS1!
+```bash
 touch publisher_subscriber.py
+```
 
-create launch file, first only with the publisher:
+Let's create our template that we can re-use in the future with only one publisher first. When we add a node to the launch file we must define the the `package`, the `node` and a chosen `name`.
 ```python
 from launch import LaunchDescription
 from launch_ros.actions import Node
@@ -768,24 +855,30 @@ def generate_launch_description():
     return ld
 ```
 
-Build the workspace:
-colcon build
+Build and don't forget to source the workspace because we added a new package!
 
-Source the worspace:
-source ~/ros2_ws/install/setup.bash
+After it we can execute our launchfile with the `ros2 launch` command:
+```bash
+david@david-ubuntu24:~$ ros2 launch bme_ros2_tutorials_bringup publisher_subscriber.py
+[INFO] [launch]: All log files can be found below /home/david/.ros/log/2024-09-29-14-17-29-864407-david-ubuntu24-41228
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [py_publisher-1]: process started with pid [41231]
+[py_publisher-1] [INFO] [1727612250.056173684] [my_publisher]: Publishing: "Hello, world: 0"
+[py_publisher-1] [INFO] [1727612250.559170990] [my_publisher]: Publishing: "Hello, world: 1"
+[py_publisher-1] [INFO] [1727612251.061618736] [my_publisher]: Publishing: "Hello, world: 2"
+```
 
-Execute the launchfile:
-ros2 launch bme_ros2_tutorials_bringup publisher_subscriber.py
+We can notice that our node is now called `my_publisher` instead of `python_publisher` as we coded in the node itself earlier. With launch files we can easily rename our nodes for better handling and organizing as our application scales up.
 
-We can notice that our node is now called `my_publisher` instead of `python_publisher` as earlier (and as we hardcoded in the publisher's python code). With launch files we can easily rename our nodes for better handling as our application scales up.
-
-We can use the ros2 node list tool to list our nodes and the output should look like this:
+We can use the `node list` tool to list our nodes and the output will look like this:
 ```bash
 david@david-ubuntu24:~/ros2_ws$ ros2 node list 
 /my_publisher
 ```
 
-Let's add the subscriber too:
+### Now let's add the subscriber too:
+
+Every time when we add a node to the launch file we also have to register it with the `ld.add_action()` function:
 
 ```python
 from launch import LaunchDescription
@@ -811,53 +904,88 @@ def generate_launch_description():
     return ld
 ```
 
-rebuild, and run
-ros2 launch bme_ros2_tutorials_bringup publisher_subscriber.py
-
-both nodes are started, we can visually see using rqt_graph or the cli tool:
+Don't forget to rebuild the workspace so the changed launchfile will be installed, after that we can run it!
 ```bash
-david@david-ubuntu24:~/ros2_ws$ ros2 node list 
+david@david-ubuntu24:~$ ros2 launch bme_ros2_tutorials_bringup publisher_subscriber.py
+[INFO] [launch]: All log files can be found below /home/david/.ros/log/2024-09-29-14-20-15-603371-david-ubuntu24-41380
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [py_publisher-1]: process started with pid [41383]
+[INFO] [py_subscriber-2]: process started with pid [41384]
+[py_publisher-1] [INFO] [1727612415.811451529] [my_publisher]: Publishing: "Hello, world: 0"
+[py_subscriber-2] [INFO] [1727612415.811459737] [my_subscriber]: Subsciber has been started.
+[py_subscriber-2] [INFO] [1727612415.811878677] [my_subscriber]: I heard: Hello, world: 0
+[py_publisher-1] [INFO] [1727612416.313222973] [my_publisher]: Publishing: "Hello, world: 1"
+[py_subscriber-2] [INFO] [1727612416.315340170] [my_subscriber]: I heard: Hello, world: 1
+```
+
+We can see that both nodes started and their logging to the standard output is combined in this single terminal window.
+
+We can verify this with `node list` or using `rqt_graph` visually:
+```bash
+david@david-ubuntu24:~$ ros2 node list 
 /my_publisher
 /my_subscriber
 ```
 
-There is another useful cli tool which list the topics:
+We can also verify the used topics with the `topic list` tool:
 ```bash
-david@david-ubuntu24:~/ros2_ws$ ros2 topic list 
+david@david-ubuntu24:~$ ros2 topic list 
 /parameter_events
 /rosout
 /topic
 ```
 
-With launch files we can not just rename our nodes, but we can also re-map topics, let's try to remap the existing `topic` to `another_topic`:
+## Remap
 
-Add remapping to the publisher:
+But with launch files we can not just rename our nodes, we can also *re-map* topics, let's try to remap the existing `/topic` to `/another_topic`:
+
+Let's add remapping to the publisher:
 ```python
+    py_publisher_node = Node(
+        package="bme_ros2_tutorials_py",
+        executable="py_publisher",
+        name="my_publisher",
         remappings=[
             ("topic", "another_topic")
         ]
+    )
 ```
 
-Build and run
+After build we can run the modified launch file and verify the topics with `topic list`:
 
-with ros2 topic list:
-david@david-ubuntu24:~/ros2_ws$ ros2 topic list 
+```bash
+david@david-ubuntu24:~$ ros2 topic list 
 /another_topic
 /parameter_events
 /rosout
 /topic
 
-Now the subsriber is not triggered because it's still listening to the topic while the publisher sends its messages to another_topic, we can see it visually that our two nodes are unconnected with rqt_grap:
+```
+Also our subsriber's callback function is not triggered because it's still listening to the `/topic` while the publisher sends its messages to `/another_topic`, we can see it visually that our two nodes are now unconnected with `rqt_grap`:
+![alt text][image10]
 
-
-We can also use the node info cli tool to check what are the published topics and the subscriptions for a specific node:
+We can also use the `node info` cli tool to check what are the published topics and the subscriptions for a specific node:
+```bash
 ros2 node info /my_publisher
+```
 
-Let's remap our subscriber too!
+### Let's remap our subscriber too!
 
-Don't forget to rebuild!
+Add re-mapping in the same way to the subscriber, too:
+```python
+...
+        remappings=[
+            ("topic", "another_topic")
+        ]
+...
+```
 
-Now let's add more publishers and subscribers, also mixing our cpp and python nodes:
+And we'll see that they are connected again, through the `/another_topic`.
+![alt text][image11]
+
+
+### Adding more nodes
+Now let's add more publishers and subscribers, also start mixing our C++ and python nodes:
 ```python
 from launch import LaunchDescription
 from launch_ros.actions import Node
@@ -908,6 +1036,149 @@ def generate_launch_description():
     ld.add_action(cpp_subscriber_node1)
     return ld
 ```
+
+Rebuild the workspace and let's soo them visually with `rqt_graph`:
+![alt text][image12]
+
+# Parameters
+
+ROS2 provides an interface to custom parameters of nodes, we can list the parameters, get or set their value with the `param list`, `param get` and `param set` cli tools.
+
+Let's see what kind of parameters do we have for our existing nodes, start our C++ publisher:
+```bash
+david@david-ubuntu24:~$ ros2 run bme_ros2_tutorials_cpp publisher_cpp 
+```
+
+And in a separate terminal execute `ros2 param list /cpp_publisher`:
+```bash
+david@david-ubuntu24:~$ ros2 param list /cpp_publisher
+  qos_overrides./parameter_events.publisher.depth
+  qos_overrides./parameter_events.publisher.durability
+  qos_overrides./parameter_events.publisher.history
+  qos_overrides./parameter_events.publisher.reliability
+  start_type_description_service
+  use_sim_time
+```
+
+Although this list a couple of parameters, these are default parameters that were set up by the ROS2 C++ API, let's write another python publisher node where this time we add a parameter with the ROS2 API. Let's use our OOP publisher as the template:
+
+```python
+#!/usr/bin/env python3
+import rclpy
+from rclpy.node import Node
+from std_msgs.msg import String
+
+class MyPublisherNode(Node):
+    def __init__(self):
+        super().__init__("python_publisher_with_parameter")
+        self.declare_parameter("published_text", "MOGI")        # Add a parameter with a default value
+        self.text_ = self.get_parameter("published_text").value # Copy the parameter value into the text_ variable
+
+        self.publisher_ = self.create_publisher(String, 'topic', 10)
+        self.timer = self.create_timer(0.5, self.timer_callback)
+        self.i = 0
+        self.msg = String()
+        self.get_logger().info("Publisher OOP has been started.")
+
+    def timer_callback(self):
+        self.msg.data = f"{self.text_}: {self.i}"               # use the text_ variable for the String message
+        self.i += 1
+        self.get_logger().info(f'Publishing: "{self.msg.data}"')
+        self.publisher_.publish(self.msg)
+
+def main(args=None):
+    rclpy.init(args=args)
+    node = MyPublisherNode()
+    rclpy.spin(node)
+    node.destroy_node()
+    rclpy.shutdown()
+
+if __name__ == "__main__":
+    main()
+```
+
+Now, let's see the parameters with the `param list` tool:
+```bash
+david@david-ubuntu24:~$ ros2 param list /python_publisher_with_parameter 
+  published_text
+  start_type_description_service
+  use_sim_time
+```
+
+The `published_text` parameter is now visible for ROS2.
+
+> Parameter handling is a key difference between ROS1 and ROS2, in ROS1 it was a centralized functionality of the ROS master (`ros_core`), every node reported it's parameters to the global parameter server and we could change their parameters only through this parameter server. In ROS2, there is no parameter server anymore and the handling of parameters is node-specific and decentralized.
+
+Let's see how can we get the value of this parameter using `param get` tool:
+
+```bash
+david@david-ubuntu24:~$ ros2 param get /python_publisher_with_parameter published_text
+String value is: MOGI
+```
+
+Now let's try to modify the parameter value from `MOGI` to `BME`:
+```bash
+ros2 param set /python_publisher_with_parameter published_text BME
+```
+
+As we experience it doesn't work because we set the `self.text_` variable in the constructor, so it's value is not dynamically read from the parameter set by the API.
+This is not necessarily a mistake, if we only want to set these parameters at startup instead of changing them runtime. For example setting up a topic's name or the frequency of a timer is often used as startup parameters.
+
+This time we want to dynamically change the text so let's move this line into the `timer_callback()` instead of the constructor:
+```python
+self.text_ = self.get_parameter("published_text").value
+```
+
+Rebuild the workspace, start the node and modify the parameter as before. As we expected we could change the published text runtime through the ROS2 `param` API.
+```bash
+[INFO] [1727616903.755729829] [python_publisher_with_parameter]: Publishing: "MOGI: 3"
+[INFO] [1727616904.254593308] [python_publisher_with_parameter]: Publishing: "MOGI: 4"
+[INFO] [1727616904.754490094] [python_publisher_with_parameter]: Publishing: "BME: 5"
+[INFO] [1727616905.255873125] [python_publisher_with_parameter]: Publishing: "BME: 6"
+```
+
+## Set the parameter from a launchfile
+
+Now, let's create a new launch file (`publisher_param.py`) that starts our latest node with a custom parameter.
+```python
+#!/usr/bin/env python3
+from launch import LaunchDescription
+from launch_ros.actions import Node
+
+def generate_launch_description():
+    ld = LaunchDescription()
+
+    cpp_publisher_node = Node(
+        package="bme_ros2_tutorials_py",
+        executable="py_publisher_with_param",
+        name="my_publisher",
+        parameters=[{"published_text": "Parameter_from_launch"}]
+    )
+
+
+    ld.add_action(cpp_publisher_node)
+    return ld
+```
+
+Rebuild the workspace and launch the file:
+```bash
+david@david-ubuntu24:~$ ros2 launch bme_ros2_tutorials_bringup publisher_param.py
+[INFO] [launch]: All log files can be found below /home/david/.ros/log/2024-09-29-15-50-33-210526-david-ubuntu24-44682
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [py_publisher_with_param-1]: process started with pid [44685]
+[py_publisher_with_param-1] [INFO] [1727617833.429100542] [my_publisher]: Publisher OOP has been started.
+[py_publisher_with_param-1] [INFO] [1727617833.926650915] [my_publisher]: Publishing: "Parameter_from_launch: 0"
+[py_publisher_with_param-1] [INFO] [1727617834.426182680] [my_publisher]: Publishing: "Parameter_from_launch: 1"
+```
+
+
+## A more advanced example for setting parameters
+
+Some parameters are usually set in the constructor like a topic's name or the frequency of a publisher. Now let's see a more advanced example for changing the frequency runtime. This is more a workaround than an API feature, on parameter change we will stop the previous timer and start another one with the new parameter.
+
+# Services
+
+## Use services and parameters from turtlesim
 
 
 # Recap
