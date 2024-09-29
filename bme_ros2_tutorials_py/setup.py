@@ -27,7 +27,8 @@ setup(
             'py_subscriber = scripts.subscriber:main',
             'py_subscriber_oop = scripts.subscriber_oop:main',
             'py_publisher_with_param = scripts.publisher_with_parameter:main',
-            'py_service_server = scripts.service_server:main'
+            'py_service_server = scripts.service_server:main',
+            'py_service_client = scripts.service_client:main'
         ],
     },
 )

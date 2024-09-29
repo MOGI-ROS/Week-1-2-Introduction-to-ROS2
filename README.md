@@ -13,6 +13,8 @@
 [image11]: ./assets/rqt_graph_5.png "rqt_graph"
 [image12]: ./assets/rqt_graph_6.png "rqt_graph"
 [image13]: ./assets/rqt_3.png "rqt"
+[image14]: ./assets/turtlesim_2.png "turtlesim"
+[image15]: ./assets/turtlesim_3.png "turtlesim"
 
 # Week 1-2: Introduction to ROS2
 
@@ -1394,40 +1396,153 @@ david@david-ubuntu24:~$ ros2 run bme_ros2_tutorials_py py_service_server
 a: 5 b: 2
 ```
 
+If you are interested in writing a service server in C++ you can check out [the official tutorials](https://docs.ros.org/en/jazzy/Tutorials/Beginner-Client-Libraries/Writing-A-Simple-Cpp-Service-And-Client.html#) about it.
+
 ## Service client
+
+Create the following python node `service_client.py`:
+```python
+#!/usr/bin/env python3
+import sys
+
+from bme_ros2_tutorials_interfaces.srv import CustomCalc # Import our own custom service
+
+import rclpy
+from rclpy.node import Node
+
+class MyServiceClientAsync(Node):
+    def __init__(self):
+        super().__init__('my_service_client_async')
+        # Create a service client
+        self.cli = self.create_client(CustomCalc, 'custom_calc')
+        # Check if service server is online
+        while not self.cli.wait_for_service(timeout_sec=1.0):
+            self.get_logger().info('service not available, waiting again...')
+        # Create the service request
+        self.req = CustomCalc.Request()
+
+    def send_request(self, a, b):
+        self.req.a = a
+        self.req.b = b
+        # Call the service with the 2 parameters in the request and return result
+        return self.cli.call_async(self.req)
+
+def main():
+    rclpy.init()
+    my_service_client = MyServiceClientAsync()
+    future = my_service_client.send_request(int(sys.argv[1]), int(sys.argv[2]))
+    # Spin only until response arrives
+    rclpy.spin_until_future_complete(my_service_client, future)
+    response = future.result()
+    my_service_client.get_logger().info(
+        'Result of custom_calc: for %d + %d = %d' %
+        (int(sys.argv[1]), int(sys.argv[2]), response.result))
+
+    my_service_client.destroy_node()
+    rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()
+```
+
+We have to add the new entry point to the `setup.py`:
+```python
+'py_service_client = scripts.service_client:main'
+```
+
+Rebuild the workspace then first, start the service server:
+```bash
+david@david-ubuntu24:~$ ros2 run bme_ros2_tutorials_py py_service_server
+```
+
+Then run the service client with 2 numbers as command line arguments:
+```bash
+david@david-ubuntu24:~$ ros2 run bme_ros2_tutorials_py py_service_client 3 4
+[INFO] [1727626843.911245336] [my_service_client_async]: Result of custom_calc: for 3 + 4 = 7
+```
 
 ## Use services and parameters with turtlesim
 
+Let's return to `turtlesim`, now we understand the ROS2 parameters and service calls. Start `turtlesim` in a terminal window:
+```bash
+ros2 run turtlesim turtlesim_node
+```
+Then run the `turtle_teleop_key` in another terminal window:
+```bash
+ros2 run turtlesim turtle_teleop_key
+```
+And start `rqt` in a 3<sup>rd</sup> terminal window. Now let's drive the turtle around, then we can play with the `/clear` and `/turtle1/set_pen` services.
+
+![alt text][image14]
+
+In another terminal window we can also check out `turtlesim`'s parameters. First let's see what kind of parameters does it have:
+```bash
+david@david-ubuntu24:~$ ros2 param list /turtlesim 
+  background_b
+  background_g
+  background_r
+  holonomic
+  qos_overrides./parameter_events.publisher.depth
+  qos_overrides./parameter_events.publisher.durability
+  qos_overrides./parameter_events.publisher.history
+  qos_overrides./parameter_events.publisher.reliability
+  start_type_description_service
+  use_sim_time
+```
+
+Then let's see for example `background_b` parameter:
+```bash
+david@david-ubuntu24:~$ ros2 param get /turtlesim background_b
+Integer value is: 255
+```
+
+And now let's try to change is:
+```bash
+david@david-ubuntu24:~/ros2_ws$ ros2 param set /turtlesim background_b 50
+Set parameter successful
+```
+
+![alt text][image15]
 
 # Recap
 
+Before we deep dive into the simulation environment, let's do a recap about the most important Linux and ROS2 commands.
+
 ## Useful Linux commands
 
-sudo
-apt update
-apt upgrade
-apt install
-nano
-ls
-cd
-~
-mkdir
-rm -rf *files-or-folders* -r means recursive (useful for folder systems) and -f is force deletion without prompting for confirmation
-touch *file*
-chmod +x *file*
-tree
+| Command        | Description |
+|----------------|-------------|
+| `sudo`         | execute commands with elevated privileges |
+| `apt`          | Debian based distributions' package manager |
+| `apt update`   | updates the local package index from the online repositories |
+| `apt upgrade`  | It installs the new versions of packages based on the information from `apt update` |
+| `nano`         | simple text editor that operated inside a terminal |
+| `ls`           | list the contents of a directory |
+| `cd`           | change the current directory |
+| `~`            | tilde represents the user's home directory, can be used together with `ls` or `cd` |
+| `mkdir`        | create a new directory|
+| `rm -rf`       | `rm` removes a file or an empty folder `-r` means recursive (useful for folder systems) and `-f` is force deletion without prompting |
+| `touch`        | creates a new file |
+| `chmod +x`     | make a file executable |
+| `tree`         | list the contents of the file system under the current directory |
 
 ## Useful ROS2 commands
 
-ros2 node list, info
-ros2 topic list, info, echo
-ros2 run *package* *node*
-ros2 pkg create
-rqt
-rqt_graph
+| Command                              | Description |
+|--------------------------------------|-------------|
+| `ros2 node list, info`               | list or obtain more information about node(s) |
+| `ros2 topic list, info, echo`        | list or obtain more information about topic(s), `echo` can subscribe onto a topic within the terminal window     |
+| `ros2 run *package* *node*`          | starts a ROS2 node from a certain package |
+| `ros2 pkg create`                    | create a ROS2 package, we can define the `--build-type ` to `ament_cmake` or `ament_python` build system for the package |
+| `rqt`                                | opens `rqt` a graphical tool to intercat with topics, services and more |
+| `rqt_graph`                          | a visual tool to see the pub-sub connections between nodes |
+| `colcon build`                       | builds the worspace |
+| `source /opt/ros/jazzy/setup.bash`   | source ROS2 environment, it's recommended to put into `.bashrc` |
+| `ros2 launch *package* *launchfile*` | starts a ROS2 launch file from a crtain package |
+| `ros2 param list, get, set`          | list, get or set the parameters of a node |
+| `ros2 interface package, show`       | list or obtain more information about the services of a package |
 
-colcon build
-source /opt/ros/jazzy/setup.bash
+TODO: move to next lesson
 
 Install Gazebo:
 compatibility: https://gazebosim.org/docs/harmonic/ros_installation/
