@@ -12,6 +12,7 @@
 [image10]: ./assets/rqt_graph_4.png "rqt_graph"
 [image11]: ./assets/rqt_graph_5.png "rqt_graph"
 [image12]: ./assets/rqt_graph_6.png "rqt_graph"
+[image13]: ./assets/rqt_3.png "rqt"
 
 # Week 1-2: Introduction to ROS2
 
@@ -1273,9 +1274,125 @@ david@david-ubuntu24:~$ ros2 run bme_ros2_tutorials_py py_publisher_with_param
 
 # Services
 
+Previously we met the publish-subscribe communication model, as a recap let's see how did we define it in the beginning of this lesson:
+> Publish-subscribe models are asynchronous, one-to-many or many-to-many interaction where the publishers don't know how many publishers there are (if any). Therefore publisher never expects any response or confirmation from the subscribers.
 
+Services are the opposite in many ways and are suitable for different use-cases:
+- Services are synchronous communications where a client sends a request to the server, the server processes the request and returns a response.
+- This is a one-to-one only interaction.
+- The communication only ends when the request was handled and response is returned.
+- Services are suitable for one-time and request-response operations.
+
+Before we write a server or client we have to create the service definition. In ROS2 usually we place custom messages, services and actions in a separate package. Let's create the `bme_ros2_tutorials_interfaces` package:
+
+```bash
+ros2 pkg create bme_ros2_tutorials_interfaces
+```
+
+The package must be an `ament_cmake` package, we can either define it with `--build-type ament_cmake` in the `pkg create` command or we can rely on the default settings of it.
+
+Let's create an `srv` folder, we will store our service here and we are free to delete the `src` and `include` folders. 
+
+> If you want to delete a folder from command line that is not empty you can use the `rm -rf folder` command
+
+In the `srv` folder we create a our service file `CustomCalc.srv` with the following request-response structure:
+```bash
+int64 a
+int64 b
+---
+int64 result
+```
+
+We have to edit `CMakeLists.txt`, add the following lines:
+```cmake
+find_package(rosidl_default_generators REQUIRED)
+
+rosidl_generate_interfaces(${PROJECT_NAME}
+  "srv/CustomCalc.srv"
+)
+```
+
+And also edit `packge.xml`, add the following lines:
+```xml
+  <buildtool_depend>rosidl_default_generators</buildtool_depend>
+  <exec_depend>rosidl_default_runtime</exec_depend>
+  <member_of_group>rosidl_interface_packages</member_of_group>
+```
+
+Then we can build the workspace. And we also have to source the environment because we added a new package!
+
+We can verify if our service was successfully created with the `ros2 interface package` cli tool:
+```bash
+david@david-ubuntu24:~$ ros2 interface package bme_ros2_tutorials_interfaces 
+bme_ros2_tutorials_interfaces/srv/CustomCalc
+```
+
+If it shows the name of our service we can even look inside with the `interface show` tool:
+```bash
+david@david-ubuntu24:~$ ros2 interface show bme_ros2_tutorials_interfaces/srv/CustomCalc
+int64 a
+int64 b
+---
+int64 result
+```
 
 ## Service server
+
+Create the following python node `service_server.py`:
+
+```python
+#!/usr/bin/env python3
+from bme_ros2_tutorials_interfaces.srv import CustomCalc # Import our own custom service
+
+import rclpy
+from rclpy.node import Node
+
+class MyService(Node):
+    def __init__(self):
+        super().__init__('my_service')
+        # Create a service server with a callback function
+        self.srv = self.create_service(CustomCalc, 'custom_calc', self.custom_calc_callback)
+
+    # A service callback has request and response parameters
+    def custom_calc_callback(self, request, response):
+        response.result = request.a + request.b
+        self.get_logger().info('Incoming request\na: %d b: %d' % (request.a, request.b))
+        return response
+
+def main():
+    rclpy.init()
+    my_service_server = MyService()
+    rclpy.spin(my_service_server)
+    rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()
+```
+
+We have to add the new entry point to the `setup.py`:
+```python
+'py_service_server = scripts.service_server:main'
+```
+
+And we also have to edit `package.xml` because now our package depends on our other interface package:
+```xml
+  <depend>bme_ros2_tutorials_interfaces</depend>
+```
+
+Rebuild the workspace and run the new node:
+
+```bash
+david@david-ubuntu24:~$ ros2 run bme_ros2_tutorials_py py_service_server
+```
+
+Now our node is running in the background waiting for a service call. Before we write our service client we can test it with `rqt`, we can add the `Service Caller` plugin, set the `a` and `b` parameters and call it.
+![alt text][image13]
+
+```bash
+david@david-ubuntu24:~$ ros2 run bme_ros2_tutorials_py py_service_server 
+[INFO] [1727625404.997418704] [my_service]: Incoming request
+a: 5 b: 2
+```
 
 ## Service client
 
@@ -1295,7 +1412,7 @@ ls
 cd
 ~
 mkdir
-rm (-rf) *files-or-folders*
+rm -rf *files-or-folders* -r means recursive (useful for folder systems) and -f is force deletion without prompting for confirmation
 touch *file*
 chmod +x *file*
 tree
