@@ -3,9 +3,9 @@
 <package format="3">
   <name>bme_ros2_tutorials_cpp</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
-  <maintainer email="david@todo.todo">david</maintainer>
-  <license>TODO: License declaration</license>
+  <description>Cpp tutorials for the BME MOGI ROS2 course</description>
+  <maintainer email="david.dudas@outlook.com">David Dudas</maintainer>
+  <license>Apache License 2.0</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 

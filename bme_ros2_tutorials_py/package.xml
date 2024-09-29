@@ -3,9 +3,9 @@
 <package format="3">
   <name>bme_ros2_tutorials_py</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
-  <maintainer email="david@todo.todo">david</maintainer>
-  <license>TODO: License declaration</license>
+  <description>Python tutorials for the BME MOGI ROS2 course</description>
+  <maintainer email="david.dudas@outlook.com">David Dudas</maintainer>
+  <license>Apache License 2.0</license>
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>

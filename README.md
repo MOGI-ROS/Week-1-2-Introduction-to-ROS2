@@ -367,6 +367,8 @@ david@david-ubuntu24:~/ros2_ws$ tree -L 4
             └── hello_world.py
 ```
 
+> It's always recommended to fill out the `description`, `maintainer` with your name and email address and `license` fields in your `package.xml` and `setup.py` files. I personally prefer a highly permissive license in non-commercial packages of mine, like `BSD` or `Apache License 2.0`.
+
 ## Let's write the simplest possible `hello_world` in python:
 
 ```python
@@ -611,7 +613,7 @@ int main(int argc, char **argv)
 }
 ```
 
-To properly set up our node in the package's metadata we have to edit the `CMakeLists.txt`:
+To properly set up our node in the package's metadata files we have to edit the `CMakeLists.txt`:
 ```bash
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
