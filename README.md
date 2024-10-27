@@ -15,6 +15,7 @@
 [image13]: ./assets/rqt_3.png "rqt"
 [image14]: ./assets/turtlesim_2.png "turtlesim"
 [image15]: ./assets/turtlesim_3.png "turtlesim"
+[image16]: ./assets/robots.png "robots"
 
 # Week 1-2: Introduction to ROS2
 
@@ -47,7 +48,7 @@ Submission deadline: **week 14**
 
 ### Available real robots at the department:
 
-PICS
+![alt text][image16]
 
 # Table of Contents
 1. [What is ROS(2)?](#what-is-ros2)
@@ -72,9 +73,6 @@ PICS
 6. [Recap](#recap)  
 6.1. [Useful Linux commands](#useful-linux-commands)  
 6.2. [Useful ROS2 commands](#useful-ros2-commands)  
-
-
-
 
 
 # What is ROS(2)?
