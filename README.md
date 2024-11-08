@@ -310,7 +310,7 @@ david@david-ubuntu24:~/ros2_ws$ ros2 topic list
 /rosout
 ```
 
-And we can get more details about a certain topic with the `ros2 topic infor /topic` command:
+And we can get more details about a certain topic with the `ros2 topic info /topic` command:
 ```bash
 david@david-ubuntu24:~/ros2_ws$ ros2 topic info /chatter 
 Type: std_msgs/msg/String
@@ -1540,18 +1540,3 @@ Before we deep dive into the simulation environment, let's do a recap about the 
 | `ros2 param list, get, set`          | list, get or set the parameters of a node |
 | `ros2 interface package, show`       | list or obtain more information about the services of a package |
 
-TODO: move to next lesson
-
-Install Gazebo:
-compatibility: https://gazebosim.org/docs/harmonic/ros_installation/
-install binary: https://gazebosim.org/docs/harmonic/install_ubuntu/
-test it: https://docs.ros.org/en/jazzy/Tutorials/Advanced/Simulators/Gazebo/Gazebo.html
-
-Various troubleshoot:
-https://robotics.stackexchange.com/questions/111547/gazebo-crashes-immediately-segmentation-fault-address-not-mapped-to-object-0
-https://github.com/gazebosim/gz-sim/issues/1492
-https://github.com/gazebosim/gz-gui/issues/618
-https://github.com/gazebosim/gz-sim/issues/1116#issuecomment-1142388038
-
-Run Gazebo:
-QT_QPA_PLATFORM=xcb gz sim shapes.sdf --render-engine ogre --render-engine-gui-api-backend opengl
