@@ -378,7 +378,13 @@ ros2 pkg create --build-type ament_python bme_ros2_tutorials_py
 ```
 > During package creation we should define if it's a C/C++ (`ament_cmake`) or a python (`ament_python`) package. If we don't do it, the default is always `ament_cmake`!
 
-Let's create a `scripts` folder inside our new package, add an empty file `__init__.py` and add our first node, `hello_world.py`. At this point our workspace should look like this (if it was not built yet):
+Let's create a `scripts` folder inside our new package, add an empty file `__init__.py` and add our first node, `hello_world.py`.
+>We can create files in Linux in several different ways, just a few examples:
+> - Right click in the folder using the desktop environment
+> - Through the development environment, in our case Visual Studio Code
+> - From command line in the current folder using the `touch` command: `touch hello_world.py`
+
+At this point our workspace should look like this (if it was not built yet):
 ```bash
 david@david-ubuntu24:~/ros2_ws$ tree -L 4
 .
@@ -479,10 +485,6 @@ ros2 run bme_ros2_tutorials_py py_hello_world
 ## Create a python publisher
 
 Let's make our first publisher in python, we create a new file in `scripts` folder: `publisher.py`.
->We can create files in Linux in several different ways, just a few examples:
-> - Right click in the folder using the desktop environment
-> - Through the development environment, in our case Visual Studio Code
-> - From command line in the current folder using the `touch` command: `touch publisher.py`
 
 We start expanding the usage of the ROS2 API with publishing related functions.
 
@@ -836,6 +838,9 @@ ros2 pkg create bme_ros2_tutorials_bringup
 
 Now let's create a `launch` folder within this new package.
 We can freely delete include and src folders:
+
+> If you want to delete a folder from command line that is not empty you can use the `rm -rf folder` command
+
 ```bash
 rm -rf include/ src/
 ```
@@ -1292,8 +1297,6 @@ ros2 pkg create bme_ros2_tutorials_interfaces
 The package must be an `ament_cmake` package, we can either define it with `--build-type ament_cmake` in the `pkg create` command or we can rely on the default settings of it.
 
 Let's create an `srv` folder, we will store our service here and we are free to delete the `src` and `include` folders. 
-
-> If you want to delete a folder from command line that is not empty you can use the `rm -rf folder` command
 
 In the `srv` folder we create a our service file `CustomCalc.srv` with the following request-response structure:
 ```bash
