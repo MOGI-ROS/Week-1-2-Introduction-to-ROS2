@@ -2,7 +2,7 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>bme_ros2_tutorials_cpp</name>
-  <version>0.0.0</version>
+  <version>1.0.0</version>
   <description>Cpp tutorials for the BME MOGI ROS2 course</description>
   <maintainer email="david.dudas@outlook.com">David Dudas</maintainer>
   <license>Apache License 2.0</license>
