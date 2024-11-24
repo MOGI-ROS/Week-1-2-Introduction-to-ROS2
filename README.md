@@ -232,9 +232,9 @@ Let's try them!
 
 The following command starts a simple publisher. A publisher is a component that is responsible for sending messages (in this example a string) over a specific topic (in this example the topic's name is `chatter`) to other nodes in the system. It is part of the publish-subscribe communication model, where publishers send data to topics, and subscribers listen to those topics to receive the data.
 
-> Publish-subscribe models are asynchronous, one-to-many or many-to-many interaction where the publishers don't know how many publishers there are (if any). Therefore publisher never expects any response or confirmation from the subscribers.
+> Publish-subscribe models are asynchronous, one-to-many or many-to-many interactions where the publishers don't know how many subscribers there are (if any). Therefore publisher never expects any response or confirmation from the subscribers.
 
-Now, let1s run the demo publisher:
+Now, let's run the demo publisher:
 
 ```bash
 ros2 run demo_nodes_cpp talker
@@ -300,7 +300,7 @@ david@david-ubuntu24:~/ros2_ws$ ros2 node info /listener
   Action Clients:
 ```
 
-At the moment the most important detail we can get about a node if it's subscribing or publishing to any topic. Let we'll learn more about parameters and services.
+At the moment the most important detail we can get about a node is if it's subscribing or publishing to any topic. Later we'll learn more about parameters and services.
 
 In a very similar way we can also list all of our topics with `ros2 topic list` command:
 ```bash
@@ -378,7 +378,13 @@ ros2 pkg create --build-type ament_python bme_ros2_tutorials_py
 ```
 > During package creation we should define if it's a C/C++ (`ament_cmake`) or a python (`ament_python`) package. If we don't do it, the default is always `ament_cmake`!
 
-Let's create a `scripts` folder inside our new package, add an empty file `__init__.py` and add our first node, `hello_world.py`. At this point our workspace should look like this (if it was not built yet):
+Let's create a `scripts` folder inside our new package, add an empty file `__init__.py` and add our first node, `hello_world.py`.
+>We can create files in Linux in several different ways, just a few examples:
+> - Right click in the folder using the desktop environment
+> - Through the development environment, in our case Visual Studio Code
+> - From command line in the current folder using the `touch` command: `touch hello_world.py`
+
+At this point our workspace should look like this (if it was not built yet):
 ```bash
 david@david-ubuntu24:~/ros2_ws$ tree -L 4
 .
@@ -435,7 +441,7 @@ cd ~/ros2_ws
 ```
 
 And here we can execute the `colcon build` command.
-After a successful built we have to update our enivornment with the freshly built package, to do this we have to run the following command:
+After a successful build we have to update our environnment with the freshly built package, to do this we have to run the following command:
 ```bash
 source install/setup.bash
 ```
@@ -479,10 +485,6 @@ ros2 run bme_ros2_tutorials_py py_hello_world
 ## Create a python publisher
 
 Let's make our first publisher in python, we create a new file in `scripts` folder: `publisher.py`.
->We can create files in Linux in several different ways, just a few examples:
-> - Right click in the folder using the desktop environment
-> - Through the development environment, in our case Visual Studio Code
-> - From command line in the current folder using the `touch` command: `touch publisher.py`
 
 We start expanding the usage of the ROS2 API with publishing related functions.
 
@@ -527,7 +529,7 @@ We have to edit `setup.py`, registering our new node as entry point:
 ...
 ```
 
-Don't forget to rebuil the workspace and we can run our new node:
+Don't forget to rebuild the workspace and we can run our new node:
 
 ```bash
 david@david-ubuntu24:~$ ros2 run bme_ros2_tutorials_py py_publisher
@@ -550,7 +552,7 @@ data: 'Hello, world: 24'
 data: 'Hello, world: 25'
 ```
 
-The above publisher node is very simple and looks exactly how do we impelent nodes in ROS1. But ROS2 provides more powerful API functions and also places a greater emphasis on object-oriented programming. So let's create another publisher but in a more OOP way and using the timer functions of the ROS2 API. The other important API function is `rclpy.spin(node)` which keeps the node running until we don't force quit it with `ctrl+c`.
+The above publisher node is very simple and looks exactly how we impelent nodes in ROS1. But ROS2 provides more powerful API functions and also places a greater emphasis on object-oriented programming. So let's create another publisher but in a more OOP way and using the timer functions of the ROS2 API. The other important API function is `rclpy.spin(node)` which keeps the node running until we don't force quit it with `ctrl+c`.
 
 ```python
 #!/usr/bin/env python3
@@ -591,7 +593,7 @@ ros2 run bme_ros2_tutorials_py py_publisher_oop
 
 ## Create a C++ publisher
 
-In ROS1 it was very straightforward to mix nodes written in different languages. In ROS2 although it's not impossible, but requires more manual editing of package metadata because we define for `ament` what is the package's build type. To keep it simple, let's create a new package, but [on this link](TODO:) you can see an example how to mix both python and C++ nodes within the same package.
+In ROS1 it was very straightforward to mix nodes written in different languages. In ROS2 although it's not impossible, it requires more manual editing of package metadata because we define for `ament` what is the package's build type. To keep it simple, let's create a new package, but [on this link](TODO:) you can see an example how to mix both python and C++ nodes within the same package.
 
 ```bash
 ros2 pkg create --build-type ament_cmake bme_ros2_tutorials_cpp
@@ -742,9 +744,9 @@ david@david-ubuntu24:~/ros2_ws$ ros2 run bme_ros2_tutorials_py py_subscriber
 We can also observe it with `rqt_graph`:
 ![alt text][image9]
 
-> And we can also observe the language agnostic approach of ROS2, without any additional effort its middleware provides the interface between the 2 nodes which were written in different programmin languages.
+> And we can also observe the language agnostic approach of ROS2, without any additional effort its middleware provides the interface between the 2 nodes which were written in different programming languages.
 
-Let's make our subscriber more OOP using our previous template from the supplier. Compared to the OOP publisher we need to replace the timer callback with a subscription callback and that's all!
+Let's make our subscriber more OOP using our previous template from the publisher. Compared to the OOP publisher we need to replace the timer callback with a subscription callback and that's all!
 ```python
 #!/usr/bin/env python3
 import rclpy
@@ -836,6 +838,9 @@ ros2 pkg create bme_ros2_tutorials_bringup
 
 Now let's create a `launch` folder within this new package.
 We can freely delete include and src folders:
+
+> If you want to delete a folder from command line that is not empty you can use the `rm -rf folder` command
+
 ```bash
 rm -rf include/ src/
 ```
@@ -958,7 +963,7 @@ But with launch files we can not just rename our nodes, we can also *re-map* top
 
 Let's add remapping to the publisher:
 ```python
-    py_publisher_node = Node(
+    publisher_node = Node(
         package="bme_ros2_tutorials_py",
         executable="py_publisher",
         name="my_publisher",
@@ -1054,7 +1059,7 @@ def generate_launch_description():
     return ld
 ```
 
-Rebuild the workspace and let's soo them visually with `rqt_graph`:
+Rebuild the workspace and let's see them visually with `rqt_graph`:
 ![alt text][image12]
 
 # Parameters
@@ -1167,7 +1172,7 @@ def generate_launch_description():
 
     cpp_publisher_node = Node(
         package="bme_ros2_tutorials_py",
-        executable="py_publisher_with_param",
+        executable="python_publisher_with_parameter",
         name="my_publisher",
         parameters=[{"published_text": "Parameter_from_launch"}]
     )
@@ -1263,7 +1268,7 @@ Set parameter successful
 
 In our other terinal:
 ```bash
-david@david-ubuntu24:~$ ros2 run bme_ros2_tutorials_py py_publisher_with_param 
+david@david-ubuntu24:~$ ros2 run bme_ros2_tutorials_py python_publisher_with_parameter 
 [INFO] [1727620325.796053193] [python_publisher_with_parameter]: Publisher OOP has been started.
 ...
 [INFO] [1727620335.792876945] [python_publisher_with_parameter]: Publishing: "MOGI: 9"
@@ -1274,8 +1279,8 @@ david@david-ubuntu24:~$ ros2 run bme_ros2_tutorials_py py_publisher_with_param
 
 # Services
 
-Previously we met the publish-subscribe communication model, as a recap let's see how did we define it in the beginning of this lesson:
-> Publish-subscribe models are asynchronous, one-to-many or many-to-many interaction where the publishers don't know how many publishers there are (if any). Therefore publisher never expects any response or confirmation from the subscribers.
+Previously we met the publish-subscribe communication model, as a recap let's see how we defined it in the beginning of this lesson:
+> Publish-subscribe models are asynchronous, one-to-many or many-to-many interactions where the publishers don't know how many subscribers there are (if any). Therefore publisher never expects any response or confirmation from the subscribers.
 
 Services are the opposite in many ways and are suitable for different use-cases:
 - Services are synchronous communications where a client sends a request to the server, the server processes the request and returns a response.
@@ -1292,8 +1297,6 @@ ros2 pkg create bme_ros2_tutorials_interfaces
 The package must be an `ament_cmake` package, we can either define it with `--build-type ament_cmake` in the `pkg create` command or we can rely on the default settings of it.
 
 Let's create an `srv` folder, we will store our service here and we are free to delete the `src` and `include` folders. 
-
-> If you want to delete a folder from command line that is not empty you can use the `rm -rf folder` command
 
 In the `srv` folder we create a our service file `CustomCalc.srv` with the following request-response structure:
 ```bash
