@@ -23,17 +23,16 @@
 
 ### In the first half of the course we'll learn how to simulate mobile robots, sensors, actuators. How to do mapping localization and navigation.
 
-  <a href="https://www.youtube.com/watch?v=YRHxixKr6r4"><img width="600" src="./assets/youtube-navigation_2.png"></a>  
-  <a href="https://www.youtube.com/watch?v=L2L7snV4sCs"><img width="600" src="./assets/youtube-navigation.png"></a>  
+  <a href="https://youtu.be/NkOX4zX9XbQ"><img width="400" src="./assets/youtube-navigation.png"></a>  
 
 ### In the second half of the course we'll learn about the simulation of robotic arms with direct and inverse kinematics.
 
-  <a href="https://www.youtube.com/watch?v=AK4aVfQVkVA"><img width="600" src="./assets/youtube-6-DoF.png"></a>  
-  <a href="https://www.youtube.com/watch?v=mm2vKYH-Jy8"><img width="600" src="./assets/youtube-openmanipulator.png"></a>  
+  <a href="https://www.youtube.com/watch?v=AK4aVfQVkVA"><img width="400" src="./assets/youtube-6-DoF.png"></a>  
+  <a href="https://www.youtube.com/watch?v=mm2vKYH-Jy8"><img width="400" src="./assets/youtube-openmanipulator.png"></a>  
 
 ### Here you can see a short video about the final projects from the previous years:
 
-<a href="https://www.youtube.com/watch?v=uLRQJh-y9AU"><img width="600" src="./assets/projects.png"></a>
+<a href="https://www.youtube.com/watch?v=uLRQJh-y9AU"><img width="400" src="./assets/projects.png"></a>
 
 ## Requirements for completing the course:
 
@@ -90,7 +89,7 @@ Key reasons for ROS development include:
 
 ROS 2 was developed to address the limitations of ROS 1 and meet the growing demands for industrial and commercial robotics applications. The development began around 2014 and aimed to enhance the capabilities of ROS, particularly in areas such as security, real-time performance, and support for multi-robot systems. In practice, the biggest difference is in the underlying middleware, ROS1 uses a custom transport layer and message-passing system that was not designed for real-time or distributed applications (see ROS1's [`roscore`](http://wiki.ros.org/roscore)).
 
-The latest ROS1 release is ROS Noetic which was intended to be used on Ubuntu 20.04.
+The latest ROS1 release is ROS Noetic which was intended to be used on Ubuntu 20.04. It goes to [EOL in May, 2025](http://wiki.ros.org/Distributions) together with Ubuntu 20.04.
 
 # Required softwares
 
@@ -99,15 +98,15 @@ The latest ROS1 release is ROS Noetic which was intended to be used on Ubuntu 20
 
 <br>In the course we'll use ROS2 [Jazzy Jalisco](https://docs.ros.org/en/jazzy/index.html), which requires Ubuntu 24.04 for the smoothest operation.
 
-You have a couple of options, but the most recommended is the native install of the operating system.
+You have a couple of options, but the most recommended is the native installation of the operating system - external SSD, dual boot, etc.
 
-1) Native install
-2) Windows 11 WSL2 (Windows Subsystem Linux): [instructions](https://documentation.ubuntu.com/wsl/en/latest/guides/install-ubuntu-wsl2/)
-3) Virtual machine, recommended: VMware fusion is [now free for personal use](https://blogs.vmware.com/teamfusion/2024/05/fusion-pro-now-available-free-for-personal-use.html)
-4) Docker container
-5) Using an online environment e.g. [The Construct](https://www.theconstruct.ai)
+1) Native install, the most recommended way. You will learn how to set up the environment, there won't be difficulties with GPU acceleration and many more advantages.
+2) Windows 11 WSL2 (Windows Subsystem Linux), see [instructions](https://documentation.ubuntu.com/wsl/en/latest/guides/install-ubuntu-wsl2/). It's a straightforward way if you want to use within Windows environment. You can still learn how to set up the environment but can be more challenging with GUI applications and 3D acceleration.
+3) Virtual machine, VMware fusion is [now free for personal use](https://blogs.vmware.com/teamfusion/2024/05/fusion-pro-now-available-free-for-personal-use.html). Less flexible than WSL2 on Windows 11 but works well on macOS. 3D acceleration can be challenging.
+4) Docker container. First it might look an easy way to use any ROS distribution on any host operating system, but it's getting more and more challenging if we need GUI applications, 3D acceleration and can be confusing for beginners how to work within the container. You might miss some important experience with setting up the environment if using a pre-configured container image. I only recommend this way for experienced Docker users.
+5) Using an online environment e.g. [The Construct](https://www.theconstruct.ai). It looks promising that you don't have to install any special software, but you won't gain experience with setting up the environment. It can be difficult to cherry pick the software versions you need and accessing GUI applications through the web interface is a poor experience.
 
-The options 1. and 2. are the most preferred solutions, in an exotic case like mine, if you want to install Ubuntu 24.04 in virtual machine on Apple silicon [this](https://www.youtube.com/watch?v=kDosGTdwqO0) is a very good tutorial.
+The options 1 and 2 are the most practical and preferred ways to use ROS. In an exotic case, if you want to run Ubuntu 24.04 and ROS2 Jazzy on macOS and Apple silicon [this](https://www.youtube.com/watch?v=kDosGTdwqO0) is a very good tutorial.
 
 >Pro tip if you want to mount directories from your host system into your guest Ubuntu 24.04 running in VMware fusion, more details [on this link](https://www.liquidweb.com/blog/create-vmware-shared-folder/):
 >```bash
@@ -226,15 +225,15 @@ ROS2 Jazzy has [an even more detailed tutorial](https://docs.ros.org/en/jazzy/Tu
 
 ## Running some examples
 
-Your ROS2 install comes with a couple of examples as you can also read [on the install page](https://docs.ros.org/en/jazzy/Installation/Ubuntu-Install-Debs.html#try-some-examples).
+Your ROS2 install comes with a couple of good examples as you can also find it [on the install page](https://docs.ros.org/en/jazzy/Installation/Ubuntu-Install-Debs.html#try-some-examples).
 
 Let's try them!
 
-The following command starts a simple publisher. A publisher is a component that is responsible for sending messages (in this example a string) over a specific topic (in this example the topic's name is `chatter`) to other nodes in the system. It is part of the publish-subscribe communication model, where publishers send data to topics, and subscribers listen to those topics to receive the data.
+The following command starts a simple `publisher` written in C++. A `publisher` is a node that is responsible for sending messages with a certain type over a specific `topic` (in this example the topic's name is `chatter` and the type is a string). A `topic` is a communication pipeline in the publish-subscribe communication model where a single message is sent to multiple subscribers, unlike message-queues that are point-to-point models, where a single message is sent to a single consumer. Publishers broadcast messages to topics, and subscribers listen to those topics to receive a copy of the message.
 
 > Publish-subscribe models are asynchronous, one-to-many or many-to-many interactions where the publishers don't know how many subscribers there are (if any). Therefore publisher never expects any response or confirmation from the subscribers.
 
-Now, let's run the demo publisher:
+Now, let's run the demo publisher written in C++:
 
 ```bash
 ros2 run demo_nodes_cpp talker
@@ -250,7 +249,7 @@ david@david-ubuntu24:~$ ros2 run demo_nodes_cpp talker
 [INFO] [1727116066.557849645] [talker]: Publishing: 'Hello World: 5'
 ```
 
-Let's start a subscriber in another terminal window, which subscribes to the `chatter` topic and listens to the publisher node's messages
+Let's start a subscriber - written in Python - in another terminal window, which subscribes to the `chatter` topic and listens to the publisher node's messages:
 
 ```bash
 david@david-ubuntu24:~$ ros2 run demo_nodes_py listener
@@ -300,9 +299,11 @@ david@david-ubuntu24:~/ros2_ws$ ros2 node info /listener
   Action Clients:
 ```
 
-At the moment the most important detail we can get about a node is if it's subscribing or publishing to any topic. Later we'll learn more about parameters and services.
+At the moment, the most interesting detail we can gather about a node is if it's subscribing or publishing to any topic. In later lessons we'll learn more about parameters and services.
 
-In a very similar way we can also list all of our topics with `ros2 topic list` command:
+---
+
+In a very similar way, we can also list all of our topics with `ros2 topic list` command:
 ```bash
 david@david-ubuntu24:~/ros2_ws$ ros2 topic list 
 /chatter
@@ -323,6 +324,8 @@ Another powerful tool is `rqt_graph` that helps us visualizing the nodes and top
 
 `rqt_graph` can be used as a standalone tool, or part of `rqt` which can be used to build a complete dashboard to mintor and control your nodes. We'll spend a lot of time with it, at the moment let's just see the message monitoring function:
 ![alt text][image5]
+
+---
 
 ### Let's run more examples: turtlesim
 Let's see another built in example which is a simple 2D plotter game.
@@ -360,7 +363,7 @@ There are 2 new terms we must learn about ROS2 workspaces:
 1. `ament` provides the underlying build system and tools specifically for ROS2 packages. `ament_cmake` is a CMake-based build system for C/C++ nodes and `ament_python` provides the tools for packing and installing python nodes and libraries.
 2. `colcon` (COmmand Line COLlectioN) is a general-purpose tool to build and manage entire workspaces with various build systems, including ament, cmake, make, and more. 
 
-It means that our ROS2 workspaces will be `colcon workspaces` which in the backround will use `ament` for building the individual packages.
+It means that our ROS2 workspace will be a `colcon workspace` which - in the backround - will use `ament` for building the individual packages.
 
 >If you have experience with ROS1, `colcon` and `ament` replaces the old `catkin` tools.
 
@@ -370,32 +373,35 @@ mkdir -p ~/ros2_ws/src
 cd ~/ros2_ws
 ```
 
->A workspace always must contain a `src` folder where we maintain the source files of our packages, later, during building colcon will create further folders for binaries and other output files.
+>A workspace must have a `src` folder where we maintain the source files of our packages, during building of the workspace colcon will create folders for the deployment of binaries and other output files.
 
-Let's go into the `src` folder and create our first python package
+Let's go into the `src` folder and create our first python package:
 ```bash
 ros2 pkg create --build-type ament_python bme_ros2_tutorials_py
 ```
 > During package creation we should define if it's a C/C++ (`ament_cmake`) or a python (`ament_python`) package. If we don't do it, the default is always `ament_cmake`!
 
-Let's create a `scripts` folder inside our new package, add an empty file `__init__.py` and add our first node, `hello_world.py`.
+We'll put our python scripts under `bme_ros2_tutorials_py` which is an automatically created folder with the same name as our package, it already has an empty file `__init__.py`, let's add our first node here: `hello_world.py`.
+
 >We can create files in Linux in several different ways, just a few examples:
 > - Right click in the folder using the desktop environment
 > - Through the development environment, in our case Visual Studio Code
 > - From command line in the current folder using the `touch` command: `touch hello_world.py`
 
-At this point our workspace should look like this (if it was not built yet):
+At this point our workspace should look like this (other files and folders are not important at this point):
 ```bash
 david@david-ubuntu24:~/ros2_ws$ tree -L 4
 .
 └── src
     └── bme_ros2_tutorials_py
-        └── scripts
-            ├── __init__.py
-            └── hello_world.py
+        ├── bme_ros2_tutorials_py
+        │   ├── __init__.py
+        │   └── hello_world.py
+        ├── package.xml
+        └── setup.py
 ```
 
-> It's always recommended to fill out the `description`, `maintainer` with your name and email address and `license` fields in your `package.xml` and `setup.py` files. I personally prefer a highly permissive license in non-commercial packages of mine, like `BSD` or `Apache License 2.0`.
+> It's always recommended to fill the `description`, `maintainer` with your name and email address and `license` fields in your `package.xml` and `setup.py` files. I personally prefer a highly permissive license in non-commercial packages of mine, like `BSD` or `Apache License 2.0`.
 
 ## Let's write the simplest possible `hello_world` in python:
 
@@ -411,42 +417,36 @@ if __name__ == '__main__':
     main()
 ```
 
-Although this is a python script that doesn't require any compilation, we have to make sure that `ament` will pack, copy and install our node. Note that we are not running python scripts directly from its source folder!
+Although this is a python script that doesn't require any compilation, we have to make sure that `ament` will pack, copy and install our node. It's important to understand that we are not running python scripts directly from the source folder!
 
 Let's edit `setup.py` that was automatically generated when we defined that our package will use `ament_python`.
 
-1. Add an entry point for every python node:
+Add an entry point for our python node. An entry point describes the folder, the filename (without `.py`) and the main entry point within the script:
 
-    ```python
-    ...
+```python
+...
         entry_points={
             'console_scripts': [
-                'py_hello_world = scripts.hello_world:main'
+                'py_hello_world = bme_ros2_tutorials_py.hello_world:main'
             ],
         },
-    ...
-    ```
+...
+```
 
-2. If your scripts folder already has a `__init__.py` file, `find_packages()` should find it, but if it doesn't happen you can anytime simply edit packages variable like this:
-    ```python
-    ...
-    #packages=find_packages(exclude=['test']),
-    packages=[package_name, 'scripts'],
-    ...
-    ```
+Our first node within our first package is ready for building it! Build must be initiated always in the root of our workspace!
 
-After this our first node in our first package is ready for build! Build must be initiated always in the root of our workspace!
 ```bash
 cd ~/ros2_ws
 ```
 
-And here we can execute the `colcon build` command.
-After a successful build we have to update our environnment with the freshly built package, to do this we have to run the following command:
+And here we execute the `colcon build` command.
+
+After a successful build we have to update our environnment to make sure ROS2 cli tools are aware about of any new packages. To do this we have to run the following command:
 ```bash
 source install/setup.bash
 ```
 
-As we did with the base ROS2 environment we can add this to the `.bashrc`, too:
+As we did with the base ROS2 environment, we can add this to the `.bashrc` so it'll be automatically sourced every time when we open a terminal:
 ```bash
 source ~/ros2_ws/install/setup.bash
 ```
@@ -456,8 +456,7 @@ And now we are ready to run our first node:
 ros2 run bme_ros2_tutorials_py py_hello_world
 ```
 
-
-Athough we could run our first node, it was a plain python script, not using any components of ROS. Let's upgrade hello world to a more *ROS-like* hello world. We import the `rclpy` which is the ROS2 python API and we start using the most basic functions of `rclpy` like `init()`, `create_node()` and `shutdown()`. If you want to already deep-dive in the the API functions you can find more details [here](https://docs.ros.org/en/jazzy/Concepts/Basic/About-Client-Libraries.html#the-rclpy-package).
+Athough we could run our first node, it was just a plain python script, not using any ROS API. Let's upgrade hello world to a more *ROS-like* hello world. We import the `rclpy` which is the ROS2 python API and we start using the most basic functions of `rclpy` like `init()`, `create_node()` and `shutdown()`. If you already want to do a deep-dive in the API functions you can find everything [here](https://docs.ros.org/en/jazzy/Concepts/Basic/About-Client-Libraries.html#the-rclpy-package).
 
 ```python
 #!/usr/bin/env python3
@@ -476,17 +475,18 @@ if __name__ == '__main__':
     main()
 ```
 
-We don't have to do anything with `setup.py` but we have to re-build the colcon workspace!
-After that we can run our node:
+We don't have to do anything with `setup.py`, the entrypoint is already there, but we have to re-build the colcon workspace!
+
+After the build we can run our node:
 ```bash
 ros2 run bme_ros2_tutorials_py py_hello_world
 ```
 
 ## Create a python publisher
 
-Let's make our first publisher in python, we create a new file in `scripts` folder: `publisher.py`.
+Let's make our first publisher in python, we create a new file in the `bme_ros2_tutorials_py` folder: `publisher.py`.
 
-We start expanding the usage of the ROS2 API with publishing related functions.
+We start expanding step-by-step our knowledge about the ROS2 API with publishing related functions (`create_publisher()` and `publish()`).
 
 ```python
 #!/usr/bin/env python3
@@ -522,8 +522,8 @@ We have to edit `setup.py`, registering our new node as entry point:
 ...
     entry_points={
         'console_scripts': [
-            'py_hello_world = scripts.hello_world:main',
-            'py_publisher = scripts.publisher:main'
+            'py_hello_world = bme_ros2_tutorials_py.hello_world:main',
+            'py_publisher = bme_ros2_tutorials_py.publisher:main'
         ],
     },
 ...
@@ -552,7 +552,7 @@ data: 'Hello, world: 24'
 data: 'Hello, world: 25'
 ```
 
-The above publisher node is very simple and looks exactly how we impelent nodes in ROS1. But ROS2 provides more powerful API functions and also places a greater emphasis on object-oriented programming. So let's create another publisher but in a more OOP way and using the timer functions of the ROS2 API. The other important API function is `rclpy.spin(node)` which keeps the node running until we don't force quit it with `ctrl+c`.
+The publisher node above is very simple and looks exactly how we historically impelented nodes in ROS1. But ROS2 provides more powerful API functions and also places a greater emphasis on object-oriented programming. So let's create another publisher in a more OOP way and using the timer functions (`create_timer()`) of the ROS2 API. The other important API function is `rclpy.spin(node)` which keeps the node running until we don't quit it with `ctrl+c` in the terminal.
 
 ```python
 #!/usr/bin/env python3
@@ -586,18 +586,20 @@ if __name__ == "__main__":
     main()
 ```
 
-As we did previously, edit `setup.py`, build the workspace and run our new node:
+As we did previously, add the new script's entrypoint in the `setup.py`, build the workspace and run our new node:
 ```bash
 ros2 run bme_ros2_tutorials_py py_publisher_oop
 ```
 
 ## Create a C++ publisher
 
-In ROS1 it was very straightforward to mix nodes written in different languages. In ROS2 although it's not impossible, it requires more manual editing of package metadata because we define for `ament` what is the package's build type. To keep it simple, let's create a new package, but [on this link](TODO:) you can see an example how to mix both python and C++ nodes within the same package.
+In ROS1 it was very straightforward to mix nodes written in different languages. In ROS2, although it's not impossible, it requires more manual editing of package metadata because we define in advance for `ament` what is the package's build type. To keep it simple now, let's create a new package:
 
 ```bash
 ros2 pkg create --build-type ament_cmake bme_ros2_tutorials_cpp
 ```
+
+> [On this link](https://roboticsbackend.com/ros2-package-for-both-python-and-cpp-nodes/), you can see an example how to mix both python and C++ nodes within the same package.
 
 Let's create `publisher.cpp` in `src` folder of the new package, this follows the object-oriented patterns as our previous python node, including the ROS2 timer. This time we work with [the ROS2 C++ API](https://docs.ros.org/en/jazzy/Concepts/Basic/About-Client-Libraries.html#the-rclcpp-package), `rclcpp`, the available API functions are pretty much identical to the `rclpy`.
 
@@ -663,7 +665,7 @@ We can use the same tools as before to observe the published data by our new C++
 
 ## Create a python subscriber
 
-Let's create a new file `subscriber.py` in the scripts folder of our python package. First let's make the very simple implementation and after that we'll implement a more OOP version of it. Here we extend our knowledge with more API functions related to subscriptions.
+Let's create a new file `subscriber.py` in our python package (`bme_ros2_tutorials_py`). First we make a very simple implementation and after that we'll implement a more OOP version of it again. We further extend our knowledge with more API functions related to subscriptions (`create_subscription()`).
 
 ```python
 #!/usr/bin/env python3
@@ -701,27 +703,25 @@ Add the node to the `setup.py` file as a new entry point
 ...
     entry_points={
         'console_scripts': [
-            'py_hello_world = scripts.hello_world:main',
-            'py_publisher = scripts.publisher:main',
-            'py_publisher_oop = scripts.publisher_oop:main',
-            'py_subscriber = scripts.subscriber:main'
+            'py_hello_world = bme_ros2_tutorials_py.hello_world:main',
+            'py_publisher = bme_ros2_tutorials_py.publisher:main',
+            'py_publisher_oop = bme_ros2_tutorials_py.publisher_oop:main',
+            'py_subscriber = bme_ros2_tutorials_py.subscriber:main'
         ],
     },
 ...
 ```
 
-Then, re-build the workspace and we can start using our new node!
+Then, build the workspace and we can run our new node!
 
 ```bash
 david@david-ubuntu24:~$ ros2 run bme_ros2_tutorials_py py_subscriber
 [INFO] [1727606328.416973729] [python_subscriber]: Subsciber has been started.
-
-
 ```
 
-If we don't start a publisher, then our subscriber is just keep listening to the `/topic` but the callback function is not invoked. The node doesn't stop running because of the `rclpy.spin(node)` API function.
+If we don't start a publisher, then our subscriber is just keep listening to the `/topic` but the callback function is not invoked. The node doesn't stop running because of the `rclpy.spin(node)`  function.
 
-Let's start our C++ publisher in another terminal window:
+Let's start our C++ publisher in another terminal:
 ```bash
 david@david-ubuntu24:~$ ros2 run bme_ros2_tutorials_cpp publisher_cpp 
 [INFO] [1727606744.184678739] [cpp_publisher]: CPP publisher has been started.
@@ -731,7 +731,7 @@ david@david-ubuntu24:~$ ros2 run bme_ros2_tutorials_cpp publisher_cpp
 [INFO] [1727606746.186169881] [cpp_publisher]: Publishing: 'Hello, world: 3'
 ```
 
-And let's see what happens with the subscriber! It's subscription callback function is invoked every time when the publisher puts a data onto the `/topic`.
+And let's see what happens with the subscriber! It's subscription callback function is invoked every time when the publisher sends a message onto the `/topic`.
 ```bash
 david@david-ubuntu24:~/ros2_ws$ ros2 run bme_ros2_tutorials_py py_subscriber
 [INFO] [1727606614.099180007] [python_subscriber]: Subsciber has been started.
@@ -741,12 +741,12 @@ david@david-ubuntu24:~/ros2_ws$ ros2 run bme_ros2_tutorials_py py_subscriber
 [INFO] [1727606746.188467429] [python_subscriber]: I heard: Hello, world: 3
 ```
 
-We can also observe it with `rqt_graph`:
+We can also check it with `rqt_graph`:
 ![alt text][image9]
 
-> And we can also observe the language agnostic approach of ROS2, without any additional effort its middleware provides the interface between the 2 nodes which were written in different programming languages.
+> And we can also observe the language agnostic approach of ROS2, without any additional effort this middleware provides interfacing between nodes written in different programming languages.
 
-Let's make our subscriber more OOP using our previous template from the publisher. Compared to the OOP publisher we need to replace the timer callback with a subscription callback and that's all!
+As before, let's make our subscriber more OOP using our previous template from the publisher. Compared to the publisher we just need to replace the timer callback with a subscription callback and that's all!
 ```python
 #!/usr/bin/env python3
 import rclpy
@@ -772,7 +772,7 @@ def main(args=None):
 if __name__ == "__main__":
     main()
 ```
-
+Build the workspace and run the node.
 
 ## Create a C++ subscriber
 
@@ -822,15 +822,15 @@ install(TARGETS
   DESTINATION lib/${PROJECT_NAME})
 ```
 
-Re-build the workspace and we can try the new node. Let's start also a publisher and observe the behavior of the new C++ subscriber with the tools we already know!
+Build the workspace and we can try the new node. Let's start also a publisher and observe the behavior of the new C++ subscriber with the tools we already know!
 
 ## Launchfiles
 
-As you noticed with the previous examples we have to use as many terminals as many nodes we start. With a simple publisher and subscriber this isn't really a problem, but in more complex robotic systems, it's quite common to use ROS nodes in the range of hundreds. Therefore ROS provides an efficient interface to launch multiple nodes together and even change their topics or parameters during launch time instead of changing the actuals nodes themselves. 
+As you noticed with the previous examples we have to use as many terminals as many nodes we start. With a simple publisher and subscriber this isn't really a big deal, but in more complex robotic projects, it's quite common to use ROS nodes in the range of tens or even hundreds. Therefore ROS provides an efficient interface to start multiple nodes together and even re-map their topics to different ones or change its parameters instead of changing the source code itself. 
 
-Compared to ROS1 it's also slightly more complicated to bundle these launchfiles with our nodes, so as a best practice, I recommend creating an individual pakage only for your launcfiles.
+Compared to ROS1 it's a bit more complicated to bundle these launchfiles with our nodes, so as a best practice, I recommend creating an individual pakage only for our launcfiles.
 
-Let's create a new package without specifying the build type (by default it's `ament_cmake`).
+Let's create a new package with `ament_cmake` or simply without specifying the build type (by default it's `ament_cmake`).
 
 ```bash
 ros2 pkg create bme_ros2_tutorials_bringup
@@ -853,12 +853,12 @@ install(DIRECTORY
 )
 ```
 
-Create a new launch file, and let's call it `publisher_subscriber.py`, in ROS2 the launchfiles are special python scripts instead of the `XML` files we used in ROS1!
+Create a new launch file, and let's call it `publisher_subscriber.launch.py`. In ROS2 the launchfiles are special declarative python scripts (with some imperative flavours) instead of the `xml` files we used in ROS1! Actually ROS2 also has the possibility to use `xml` based launch files, but the general usage and the documentation of this feature is very poor. Initially the python based launch system was intended to be the backend of xml launchfiles but it wasn't ready for the initial launch of ROS2 and the community rather jumped on using the python launch system.
 ```bash
-touch publisher_subscriber.py
+touch publisher_subscriber.launch.py
 ```
 
-Let's create our template that we can re-use in the future with only one publisher first. When we add a node to the launch file we must define the the `package`, the `node` and a chosen `name`.
+Let's create our template that we can re-use in the future with only one publisher first. When we add a node to the launch file we must define the the `package`, the `node` (executable) and a freely chosen `name`.
 ```python
 #!/usr/bin/env python3
 from launch import LaunchDescription
@@ -881,7 +881,7 @@ Build and don't forget to source the workspace because we added a new package!
 
 After it we can execute our launchfile with the `ros2 launch` command:
 ```bash
-david@david-ubuntu24:~$ ros2 launch bme_ros2_tutorials_bringup publisher_subscriber.py
+david@david-ubuntu24:~$ ros2 launch bme_ros2_tutorials_bringup publisher_subscriber.launch.py
 [INFO] [launch]: All log files can be found below /home/david/.ros/log/2024-09-29-14-17-29-864407-david-ubuntu24-41228
 [INFO] [launch]: Default logging verbosity is set to INFO
 [INFO] [py_publisher-1]: process started with pid [41231]
@@ -890,7 +890,9 @@ david@david-ubuntu24:~$ ros2 launch bme_ros2_tutorials_bringup publisher_subscri
 [py_publisher-1] [INFO] [1727612251.061618736] [my_publisher]: Publishing: "Hello, world: 2"
 ```
 
-We can notice that our node is now called `my_publisher` instead of `python_publisher` as we coded in the node itself earlier. With launch files we can easily rename our nodes for better handling and organizing as our application scales up.
+> If we don't write the *`launch`* word explicitly in the filename of our launch file, the `ros2 launch` cli tool won't be able to autocomplete the filenames.
+
+We can notice that our node is now called `my_publisher` instead of `python_publisher` as we coded in the node itself earlier. With the launch files we can easily rename our nodes for better handling and organizing as our application scales up.
 
 We can use the `node list` tool to list our nodes and the output will look like this:
 ```bash
@@ -928,7 +930,7 @@ def generate_launch_description():
 
 Don't forget to rebuild the workspace so the changed launchfile will be installed, after that we can run it!
 ```bash
-david@david-ubuntu24:~$ ros2 launch bme_ros2_tutorials_bringup publisher_subscriber.py
+david@david-ubuntu24:~$ ros2 launch bme_ros2_tutorials_bringup publisher_subscriber.launch.py
 [INFO] [launch]: All log files can be found below /home/david/.ros/log/2024-09-29-14-20-15-603371-david-ubuntu24-41380
 [INFO] [launch]: Default logging verbosity is set to INFO
 [INFO] [py_publisher-1]: process started with pid [41383]
@@ -959,7 +961,7 @@ david@david-ubuntu24:~$ ros2 topic list
 
 ## Remap
 
-But with launch files we can not just rename our nodes, we can also *re-map* topics, let's try to remap the existing `/topic` to `/another_topic`:
+With the launch files we can not just rename our nodes, we can also *re-map* topics, let's try to remap the existing `/topic` to `/another_topic`:
 
 Let's add remapping to the publisher:
 ```python
@@ -983,7 +985,7 @@ david@david-ubuntu24:~$ ros2 topic list
 /topic
 
 ```
-Also our subsriber's callback function is not triggered because it's still listening to the `/topic` while the publisher sends its messages to `/another_topic`, we can see it visually that our two nodes are now unconnected with `rqt_grap`:
+Our subsriber's callback function is obviously not triggered because it's still listening to the original `/topic` while the publisher now sends its messages to `/another_topic`, we can see it visually that our two nodes are now unconnected with `rqt_graph`:
 ![alt text][image10]
 
 We can also use the `node info` cli tool to check what are the published topics and the subscriptions for a specific node:
@@ -1161,7 +1163,7 @@ Rebuild the workspace, start the node and modify the parameter as before. As we 
 
 ## Set the parameter from a launchfile
 
-Now, let's create a new launch file (`publisher_param.py`) that starts our latest node with a custom parameter.
+Now, let's create a new launch file (`publisher_param.launch.py`) that starts our latest node with a custom parameter.
 ```python
 #!/usr/bin/env python3
 from launch import LaunchDescription
@@ -1184,7 +1186,7 @@ def generate_launch_description():
 
 Rebuild the workspace and launch the file:
 ```bash
-david@david-ubuntu24:~$ ros2 launch bme_ros2_tutorials_bringup publisher_param.py
+david@david-ubuntu24:~$ ros2 launch bme_ros2_tutorials_bringup publisher_param.launch.py
 [INFO] [launch]: All log files can be found below /home/david/.ros/log/2024-09-29-15-50-33-210526-david-ubuntu24-44682
 [INFO] [launch]: Default logging verbosity is set to INFO
 [INFO] [py_publisher_with_param-1]: process started with pid [44685]
@@ -1282,7 +1284,7 @@ david@david-ubuntu24:~$ ros2 run bme_ros2_tutorials_py python_publisher_with_par
 Previously we met the publish-subscribe communication model, as a recap let's see how we defined it in the beginning of this lesson:
 > Publish-subscribe models are asynchronous, one-to-many or many-to-many interactions where the publishers don't know how many subscribers there are (if any). Therefore publisher never expects any response or confirmation from the subscribers.
 
-Services are the opposite in many ways and are suitable for different use-cases:
+Services are different in many ways and are suitable for different use-cases:
 - Services are synchronous communications where a client sends a request to the server, the server processes the request and returns a response.
 - This is a one-to-one only interaction.
 - The communication only ends when the request was handled and response is returned.
@@ -1374,7 +1376,7 @@ if __name__ == '__main__':
 
 We have to add the new entry point to the `setup.py`:
 ```python
-'py_service_server = scripts.service_server:main'
+'py_service_server = bme_ros2_tutorials_py.service_server:main'
 ```
 
 And we also have to edit `package.xml` because now our package depends on our other interface package:
@@ -1448,7 +1450,7 @@ if __name__ == '__main__':
 
 We have to add the new entry point to the `setup.py`:
 ```python
-'py_service_client = scripts.service_client:main'
+'py_service_client = bme_ros2_tutorials_py.service_client:main'
 ```
 
 Rebuild the workspace then first, start the service server:
