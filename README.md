@@ -32,7 +32,7 @@
 
 ### Here you can see a short video about the final projects from the previous years:
 
-<a href="https://www.youtube.com/watch?v=uLRQJh-y9AU"><img width="400" src="./assets/projects.png"></a>
+<a href="https://youtu.be/opmUsI7y6Y8"><img width="400" src="./assets/projects.png"></a>
 
 ## Requirements for completing the course:
 
