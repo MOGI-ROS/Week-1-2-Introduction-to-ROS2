@@ -39,7 +39,7 @@
 Detailed description and requirements of the final project can be found on this [link](https://docs.google.com/spreadsheets/d/1gMaBODfGlU8p0b80DhkFaF4C9gJfaIIUKGdBXtmJcQI/edit?usp=sharing). 
 
 ### Short summary:
-Registration deadline for projects: **week 5**  
+Registration deadline for projects: **week 4**  
 Submission deadline: **week 14**
    - Project teams should consist of 3, maximum 4 members.
    - The project submission will take place live (on Teams) in 15+5 minutes
