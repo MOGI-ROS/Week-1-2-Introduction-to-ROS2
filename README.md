@@ -219,6 +219,15 @@ I created an [example gist](https://gist.github.com/dudasdavid/bb2366e2a68bf1401
 
 ROS2 Jazzy has [an even more detailed tutorial](https://docs.ros.org/en/jazzy/Tutorials/Beginner-CLI-Tools/Configuring-ROS2-Environment.html) about setting up your environment, you can check it out, too!
 
+> If you run into the following error that your GPG keys expired:
+> ```bash
+> W: An error occurred during the signature verification. The repository is not updated and the previous index files will be used. GPG error: http://packages.ros.org/ros2/ubuntu noble InRelease: The following signatures were invalid: EXPKEYSIG F42ED6FBAB17C654 Open Robotics <info@osrfoundation.org>
+> ```
+> You can fix it by updating your keys:
+> ```
+> sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
+> ```
+
 </details>
 
 # Basics of ROS2
