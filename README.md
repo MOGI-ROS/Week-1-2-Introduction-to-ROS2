@@ -36,7 +36,7 @@
 
 ## Requirements for completing the course:
 
-Detailed description and requirements of the final project can be found on this [link](https://docs.google.com/spreadsheets/d/1gMaBODfGlU8p0b80DhkFaF4C9gJfaIIUKGdBXtmJcQI/edit?usp=sharing). 
+Detailed description and requirements of the final project can be found on this [link](https://docs.google.com/spreadsheets/d/1EhQmqNFcWAu56nH2WUJubFqpV1Cpl9Vfxt4Ua5Dg_bE/edit?usp=sharing). 
 
 ### Short summary:
 Registration deadline for projects: **week 4**  
